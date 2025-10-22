@@ -1,1 +1,0 @@
-# Smart City Electric Bill Demo\n\nA simple HTML-based portal for electric bill recharge simulation.\n\n- Login with demo accounts\n- Recharge meter and view history\n- All data stored locally in browser\n
