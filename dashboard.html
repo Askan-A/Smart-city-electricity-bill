@@ -3,201 +3,187 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SmartCity — Pay Electricity Bill</title>
+  <title>Dashboard — SmartCity</title>
 
-  <!-- Tailwind CDN (quick) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* subtle custom styles & animations */
-    :root{
-      --accent:#0ea5a4; /* teal-ish */
-      --glass-bg: rgba(255,255,255,0.6);
-    }
-
-    .bg-gradient-hero{
-      background: linear-gradient(135deg, rgba(14,165,164,0.08) 0%, rgba(99,102,241,0.04) 50%, rgba(14,165,164,0.04) 100%);
-      backdrop-filter: blur(2px);
-    }
-
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-      100% { transform: translateY(0px); }
-    }
-
-    .float-slow { animation: float 5s ease-in-out infinite; }
-
-    .fade-in-up {
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeInUp 0.6s ease forwards;
-      animation-delay: 0.1s;
-    }
-    @keyframes fadeInUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .glass {
-      background: var(--glass-bg);
-      border: 1px solid rgba(255,255,255,0.45);
-      box-shadow: 0 6px 18px rgba(15,23,42,0.06);
-      backdrop-filter: blur(6px);
-    }
-
-    /* small helper for input focus ring with accent */
-    .focus-accent:focus {
-      outline: none;
-      box-shadow: 0 0 0 4px rgba(14,165,164,0.12);
-      border-color: var(--accent);
-    }
+    :root{ --accent:#06b6d4; }
+    .glass { background: rgba(255,255,255,0.66); backdrop-filter: blur(6px); border-radius: 14px; }
+    @keyframes pop { from { transform: translateY(6px) scale(.99); opacity:0 } to { transform: translateY(0) scale(1); opacity:1 } }
+    .pop-in { animation: pop .36s ease both; }
+    .txn-appear { animation: pop .28s cubic-bezier(.2,.9,.3,1) both; }
+    .chip { background: rgba(6,182,212,0.08); color: #065f66; padding: .35rem .6rem; border-radius: 999px; font-weight:600; font-size:.85rem; }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+<body class="bg-slate-50 min-h-screen">
 
-  <main class="min-h-screen flex items-center justify-center p-6">
-    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+  <div class="max-w-6xl mx-auto p-6">
+    <header class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-sky-500 flex items-center justify-center text-white font-bold">SC</div>
+        <div>
+          <h1 class="text-xl font-semibold">SmartCity — Account</h1>
+          <p class="text-sm text-slate-500">Manage recharges & view history</p>
+        </div>
+      </div>
 
-      <!-- Left: marketing / hero -->
-      <section class="p-8 md:p-12 rounded-2xl bg-white glass float-slow">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-sky-500 flex items-center justify-center text-white text-lg font-bold shadow-lg">SC</div>
-          <div>
-            <h1 class="text-xl md:text-2xl font-semibold">SmartCity — Electricity Payments</h1>
-            <p class="text-xs text-slate-500 -mt-1">Pay, track and manage your meter recharges — fast & secure.</p>
+      <div class="flex items-center gap-3">
+        <div id="nameBadge" class="chip">User</div>
+        <button id="logoutBtn" class="px-3 py-2 rounded-lg border">Logout</button>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left column: account summary -->
+      <aside class="lg:col-span-1 glass p-5 pop-in">
+        <h3 class="text-sm text-slate-500">Account</h3>
+        <div class="mt-3">
+          <div class="text-slate-700 text-lg font-semibold" id="displayName">—</div>
+          <div class="text-sm text-slate-500 mt-1">Customer ID <span class="font-mono" id="ccc">—</span></div>
+          <div class="text-sm text-slate-500 mt-1">Meter No <span class="font-mono" id="meterNo">—</span></div>
+        </div>
+
+        <div class="mt-6">
+          <h4 class="text-sm text-slate-500">Quick actions</h4>
+          <div class="mt-3 space-y-3">
+            <button id="quick50" class="w-full px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200">Recharge ₹50</button>
+            <button id="quick100" class="w-full px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200">Recharge ₹100</button>
+            <button id="quick500" class="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 text-white">Recharge ₹500</button>
           </div>
         </div>
+      </aside>
 
-        <h2 class="text-2xl font-bold mb-3 fade-in-up">Power your home. Pay in seconds.</h2>
-        <p class="text-slate-600 mb-6 fade-in-up" style="animation-delay:0.15s">
-          Modern payments for municipal electricity. This demo simulates recharges and stores history in your browser.
-        </p>
+      <!-- Middle: recharge -->
+      <section class="lg:col-span-2 space-y-6">
+        <div class="glass p-6 pop-in">
+          <h3 class="text-lg font-semibold">Recharge Meter</h3>
+          <p class="text-sm text-slate-500">Make a quick top-up to your electricity meter.</p>
 
-        <ul class="space-y-3 text-sm text-slate-700">
-          <li class="flex items-start gap-3">
-            <div class="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 font-semibold">✓</div>
-            <div><strong>Simple login</strong> — email & password (demo accounts provided).</div>
-          </li>
-          <li class="flex items-start gap-3">
-            <div class="w-9 h-9 rounded-lg bg-sky-50 flex items-center justify-center text-sky-600 font-semibold">⤴</div>
-            <div><strong>Track recharges</strong> — view your CCC number and past transactions.</div>
-          </li>
-          <li class="flex items-start gap-3">
-            <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 font-semibold">⚡</div>
-            <div><strong>Responsive & animated</strong> — looks good on mobile and desktop.</div>
-          </li>
-        </ul>
-
-        <div class="mt-8">
-          <a href="#login" class="inline-block px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-xl shadow hover:scale-[1.01] transition transform">Get started — Login</a>
-        </div>
-
-        <p class="mt-6 text-xs text-slate-400">Demo accounts: <strong>user@example.com / pass123</strong> and <strong>raj@smartcity.com / raj2025</strong>.</p>
-      </section>
-
-      <!-- Right: login card -->
-      <section id="login" class="p-6 rounded-2xl bg-white shadow-md glass">
-        <div class="mb-4">
-          <h3 class="text-lg font-semibold">Welcome back</h3>
-          <p class="text-sm text-slate-500">Sign in with your email to access your account</p>
-        </div>
-
-        <form id="loginForm" class="space-y-4" autocomplete="on">
-          <div>
-            <label class="text-xs font-medium text-slate-600">Email</label>
-            <input id="email" type="email" required
-                   class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-200 focus-accent focus:border-transparent" placeholder="you@example.com" />
-          </div>
-
-          <div>
-            <label class="text-xs font-medium text-slate-600">Password</label>
-            <div class="relative">
-              <input id="password" type="password" required
-                     class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-200 focus-accent focus:border-transparent" placeholder="••••••••" />
+          <form id="rechargeForm" class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+            <div class="md:col-span-2">
+              <label class="text-xs text-slate-600">Amount (₹)</label>
+              <input id="amount" type="number" min="1" value="100" required class="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200" />
             </div>
+
+            <div>
+              <button class="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 text-white" type="submit">Pay</button>
+            </div>
+          </form>
+
+          <div id="rechargeMsg" class="mt-3 text-sm text-green-600"></div>
+        </div>
+
+        <div class="glass p-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">Transaction history</h3>
+            <div class="text-sm text-slate-500">Showing last <span id="txCount">0</span></div>
           </div>
 
-          <div class="flex items-center justify-between text-sm">
-            <label class="flex items-center gap-2 text-slate-600">
-              <input id="remember" type="checkbox" class="h-4 w-4" /> Remember
-            </label>
-            <a class="text-teal-600 hover:underline text-sm" href="#" onclick="alert('Demo: no password reset')">Forgot?</a>
+          <div class="mt-4" id="txList">
+            <!-- transactions will render here -->
+            <div class="text-sm text-slate-500">No transactions yet.</div>
           </div>
+        </div>
 
-          <div>
-            <div id="loginError" class="text-sm text-red-600 min-h-[1.2em]"></div>
-            <button type="submit" class="w-full mt-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold shadow hover:scale-[1.01] transition-transform">
-              <!-- small animated dot -->
-              <svg id="btnSpinner" class="w-4 h-4 opacity-0 transition-opacity" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="40" stroke-dashoffset="10"/>
-              </svg>
-              Sign in
-            </button>
-          </div>
-
-          <div class="pt-3 text-center text-xs text-slate-500">Or <a href="#" class="text-teal-600 underline" onclick="fillDemo()">use demo credentials</a></div>
-        </form>
-
-        <div class="mt-6 text-xs text-slate-400">This is a demo static site — no backend. For production you'd connect to a secure API & payment gateway.</div>
+        <div class="glass p-6 text-sm text-slate-500">
+          <strong>Note:</strong> This is a demo static site. For production usage integrate secure authentication, server-side storage, and a payment gateway.
+        </div>
       </section>
     </div>
-  </main>
+  </div>
 
   <script>
-    // Mock users
-    const USERS = [
-      { email: 'user@example.com', password: 'pass123', customerId: 'CCC-1001', name: 'Asha Patel', meter: 'MTR-908172' },
-      { email: 'raj@smartcity.com', password: 'raj2025', customerId: 'CCC-2077', name: 'Raj Kumar', meter: 'MTR-118291' }
-    ];
-
-    const form = document.getElementById('loginForm');
-    const loginError = document.getElementById('loginError');
-    const emailEl = document.getElementById('email');
-    const passwordEl = document.getElementById('password');
-    const rememberEl = document.getElementById('remember');
-
-    // quick animation for button (show spinner)
-    function setBtnLoading(on){
-      const spinner = document.getElementById('btnSpinner');
-      spinner.style.opacity = on ? '1' : '0';
+    // Restore user session or redirect to login
+    const session = localStorage.getItem('sc_user');
+    if(!session){
+      // redirect to login
+      location.href = 'index.html';
     }
 
-    form.addEventListener('submit', (e)=>{
+    const user = JSON.parse(session);
+    document.getElementById('displayName').textContent = user.name;
+    document.getElementById('ccc').textContent = user.customerId;
+    document.getElementById('meterNo').textContent = user.meter;
+    document.getElementById('nameBadge').textContent = user.name.split(' ')[0];
+
+    // transactions key
+    const TX_KEY = 'sc_recharges';
+    let txns = JSON.parse(localStorage.getItem(TX_KEY) || '[]');
+
+    const txListEl = document.getElementById('txList');
+    const txCountEl = document.getElementById('txCount');
+    const msgEl = document.getElementById('rechargeMsg');
+
+    function renderTx(){
+      const myTx = txns.filter(t => t.customerId === user.customerId);
+      txCountEl.textContent = myTx.length;
+      if(myTx.length === 0){
+        txListEl.innerHTML = '<div class="text-sm text-slate-500">No transactions yet.</div>';
+        return;
+      }
+
+      // show most recent first
+      txListEl.innerHTML = myTx.slice().reverse().map(t => {
+        const date = new Date(t.date);
+        return `
+          <div class="txn-appear p-3 border rounded-lg mb-3 bg-white">
+            <div class="flex justify-between items-start gap-3">
+              <div>
+                <div class="text-slate-800 font-medium">₹${t.amount}</div>
+                <div class="text-xs text-slate-500 mt-1">Ref: <span class="font-mono">${t.reference}</span></div>
+              </div>
+              <div class="text-right text-xs text-slate-500">
+                <div>${date.toLocaleString()}</div>
+                <div class="mt-1">Meter: <span class="font-mono">${t.meter}</span></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    renderTx();
+
+    // recharge form
+    document.getElementById('rechargeForm').addEventListener('submit', (e)=>{
       e.preventDefault();
-      loginError.textContent = '';
-      setBtnLoading(true);
+      msgEl.textContent = '';
+      const val = Number(document.getElementById('amount').value);
+      if(!val || val <= 0) { msgEl.textContent = 'Enter a valid amount'; msgEl.style.color = 'red'; return; }
 
-      const email = emailEl.value.trim();
-      const password = passwordEl.value;
+      // simulate payment & push tx
+      const tx = {
+        id: Date.now(),
+        customerId: user.customerId,
+        name: user.name,
+        meter: user.meter,
+        amount: val,
+        date: new Date().toISOString(),
+        reference: 'REF-' + Math.random().toString(36).slice(2,9).toUpperCase()
+      };
 
-      // simulate small delay
-      setTimeout(()=>{
-        setBtnLoading(false);
-        const found = USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-        if(!found){
-          loginError.textContent = 'Invalid email or password.';
-          return;
-        }
+      txns.push(tx);
+      localStorage.setItem(TX_KEY, JSON.stringify(txns));
+      renderTx();
+      msgEl.style.color = 'green';
+      msgEl.textContent = `Successfully recharged ₹${val}. Ref ${tx.reference}`;
 
-        // store session (in production: use secure cookies / JWT)
-        localStorage.setItem('sc_user', JSON.stringify(found));
-        if(rememberEl.checked) localStorage.setItem('sc_remember', '1'); else localStorage.removeItem('sc_remember');
-
-        // go to dashboard
-        location.href = 'dashboard.html';
-      }, 700);
+      // small confetti-like CSS (quick)
+      setTimeout(()=> msgEl.textContent = '', 4000);
     });
 
-    function fillDemo(){
-      emailEl.value = 'user@example.com';
-      passwordEl.value = 'pass123';
-    }
+    // quick recharge buttons
+    document.getElementById('quick50').addEventListener('click', ()=> { document.getElementById('amount').value = 50; });
+    document.getElementById('quick100').addEventListener('click', ()=> { document.getElementById('amount').value = 100; });
+    document.getElementById('quick500').addEventListener('click', ()=> { document.getElementById('amount').value = 500; });
 
-    // If user already logged in, send straight to dashboard
-    (function(){
-      const sess = localStorage.getItem('sc_user');
-      if(sess) location.href = 'dashboard.html';
-    })();
+    // logout
+    document.getElementById('logoutBtn').addEventListener('click', ()=>{
+      localStorage.removeItem('sc_user');
+      // optional: clear remember flag if used
+      location.href = 'index.html';
+    });
   </script>
 </body>
 </html>
