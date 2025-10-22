@@ -1,13 +1,13 @@
 # SmartCity Portal
 
-A modern static website to manage utilities and payments in India.
+A beautifully designed modern utility management website for India 🌆
 
-## 🚀 Features
-- Animated homepage with SmartCity logo
-- Interactable services (Recharge Meter, Pay Water Bill, Mobile Recharge)
-- Secure login for electricity meter recharges
-- Dashboard showing CCC number, meter details, and transaction history
-- Responsive UI using TailwindCSS
+## ✨ Features
+- Interactive **homepage** with glowing, animated service cards  
+- Secure **meter login** and **recharge dashboard**  
+- Stores previous transactions in browser  
+- Responsive, animated, and built entirely with **TailwindCSS + Lucide icons**  
+- Fully static — perfect for **GitHub Pages**
 
 ## 🔑 Demo Login
 - **Email:** user@example.com  
@@ -16,7 +16,9 @@ or
 - **Email:** raj@smartcity.com  
 - **Password:** raj2025  
 
-## ⚙️ Deployment
-1. Upload all files to a GitHub repository.
-2. Go to **Settings → Pages → Source → main branch → /root**.
-3. Wait a few minutes — your site will be live via GitHub Pages!
+## 🚀 How to Deploy
+1. Upload all files to a GitHub repository.  
+2. Go to **Settings → Pages → Source → main branch → /root**.  
+3. Save and wait a few minutes.  
+4. Your live site will appear at:  
+   `https://<your-username>.github.io/<repository-name>/`
