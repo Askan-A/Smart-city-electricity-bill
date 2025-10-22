@@ -1,81 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SmartCity — Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body,html{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto;}
+    .parallax{position:fixed;inset:0;background-image:url('assets/black-gold.png');background-size:cover;background-position:center top;background-attachment:fixed;z-index:-3}
+    .bg-dim{position:fixed;inset:0;background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.2));z-index:-2;pointer-events:none}
+    #particleCanvas{position:fixed;inset:0;z-index:-1;pointer-events:none;mix-blend-mode:screen}
+    .glass{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px);color:#fff}
+    .container{max-width:980px;margin:4rem auto;padding:1rem}
+    .panel{padding:1.25rem;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04)}
+  </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-cyan-50 min-h-screen">
-  <div class="max-w-4xl mx-auto p-6">
-    <header class="flex justify-between items-center mb-6">
-      <h1 class="text-xl font-semibold">SmartCity Dashboard</h1>
-      <button id="logout" class="bg-red-500 text-white px-4 py-2 rounded-lg">Logout</button>
-    </header>
+<body>
 
-    <section class="bg-white p-6 rounded-2xl shadow-md mb-6">
-      <h2 id="userName" class="text-lg font-bold mb-2">Welcome</h2>
-      <p>Customer ID: <span id="ccc"></span></p>
-      <p>Meter No: <span id="meter"></span></p>
-    </section>
+  <div class="parallax" aria-hidden="true"></div>
+  <div class="bg-dim" aria-hidden="true"></div>
+  <canvas id="particleCanvas" aria-hidden="true"></canvas>
 
-    <section class="bg-white p-6 rounded-2xl shadow-md mb-6">
-      <h3 class="text-lg font-semibold mb-2">Recharge Meter</h3>
+  <div class="container">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-r from-yellow-400 to-amber-500 font-bold text-black">SC</div>
+        <div class="text-white font-semibold text-lg">SmartCity Dashboard</div>
+      </div>
+      <div><button id="logout" class="px-3 py-2 bg-rose-500 text-white rounded">Logout</button></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="panel glass">
+        <h3 class="text-white font-semibold mb-2" id="userName">Welcome</h3>
+        <p class="text-sm text-white/70">Customer ID: <span id="ccc" class="font-mono"></span></p>
+        <p class="text-sm text-white/70">Meter: <span id="meter"></span></p>
+      </div>
+
+      <div class="panel glass">
+        <h4 class="text-white font-semibold mb-2">Quick Actions</h4>
+        <div class="flex gap-2">
+          <button class="px-3 py-2 rounded bg-white/8 text-white" id="q50">₹50</button>
+          <button class="px-3 py-2 rounded bg-white/8 text-white" id="q100">₹100</button>
+          <button class="px-3 py-2 rounded bg-gradient-to-r from-yellow-400 to-amber-500 text-black" id="q500">₹500</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel mb-6">
+      <h4 class="text-white font-semibold mb-3">Recharge Meter</h4>
       <form id="rechargeForm" class="flex gap-2">
-        <input id="amount" type="number" placeholder="Amount ₹" class="border px-3 py-2 rounded-lg w-full">
-        <button class="bg-cyan-500 text-white px-4 py-2 rounded-lg">Recharge</button>
+        <input id="amount" type="number" placeholder="Amount ₹" class="flex-1 p-2 rounded bg-transparent border border-white/6 text-white" />
+        <button class="px-4 py-2 rounded bg-amber-400 font-semibold">Recharge</button>
       </form>
-      <p id="msg" class="text-green-600 text-sm mt-2"></p>
-    </section>
+      <p id="msg" class="text-sm text-green-300 mt-3"></p>
+    </div>
 
-    <section class="bg-white p-6 rounded-2xl shadow-md">
-      <h3 class="text-lg font-semibold mb-3">Transaction History</h3>
-      <div id="txList" class="space-y-2"></div>
-    </section>
+    <div class="panel">
+      <h4 class="text-white font-semibold mb-3">Transaction History</h4>
+      <div id="txList" class="space-y-2 text-white/80 text-sm"></div>
+    </div>
   </div>
 
   <script>
-    const user = JSON.parse(localStorage.getItem('sc_user') || 'null');
-    if (!user) window.location.href = 'meter-login.html';
+    // particle canvas reuse
+    (function () {
+      const canvas = document.getElementById('particleCanvas');
+      const ctx = canvas.getContext('2d');
+      const DPR = window.devicePixelRatio || 1;
+      function resize(){ canvas.width = innerWidth * DPR; canvas.height = innerHeight * DPR; canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px'; ctx.setTransform(DPR,0,0,DPR,0,0); }
+      resize(); window.addEventListener('resize', resize);
+      const particles = []; const COUNT = 32;
+      function r(min,max){return Math.random()*(max-min)+min;}
+      for(let i=0;i<COUNT;i++) particles.push({x:r(0,innerWidth), y:r(0,innerHeight/2), r:r(0.8,3.6), a:r(0.2,0.9), vx:r(-0.25,0.25), vy:r(0.02,0.16), tw:r(0,Math.PI*2)});
+      function loop(){ ctx.clearRect(0,0,innerWidth,innerHeight); for(const p of particles){ p.x += p.vx*0.6; p.y += p.vy*0.8 + Math.sin(p.tw)*0.02; p.tw += 0.03; if(p.x<-50) p.x=innerWidth+50; if(p.x>innerWidth+50) p.x=-50; if(p.y>innerHeight+60) p.y=-50; const grd = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6); grd.addColorStop(0, 'rgba(255,223,86,'+(p.a*0.9)+')'); grd.addColorStop(0.4, 'rgba(255,200,60,'+(p.a*0.45)+')'); grd.addColorStop(1,'rgba(255,180,40,0)'); ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*6,0,Math.PI*2); ctx.fill(); ctx.fillStyle='rgba(255,245,200,'+p.a+')'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); } requestAnimationFrame(loop); }
+      loop();
+    })();
 
+    // Dashboard logic
+    const user = JSON.parse(localStorage.getItem('sc_user') || 'null');
+    if(!user) location.href = 'meter-login.html';
     document.getElementById('userName').textContent = 'Welcome, ' + user.name;
     document.getElementById('ccc').textContent = user.customerId;
     document.getElementById('meter').textContent = user.meter;
 
-    const key = 'sc_transactions';
-    let txs = JSON.parse(localStorage.getItem(key) || '[]');
+    const KEY = 'sc_transactions';
+    let txs = JSON.parse(localStorage.getItem(KEY) || '[]');
 
-    const render = () => {
+    function render(){
       const list = document.getElementById('txList');
-      if (txs.length === 0) {
-        list.innerHTML = '<p class="text-slate-500">No transactions yet.</p>';
-        return;
-      }
-      list.innerHTML = txs.map(t => `
-        <div class="p-3 bg-slate-50 rounded-lg border">
-          ₹${t.amount} — ${new Date(t.date).toLocaleString()}
-        </div>
-      `).join('');
-    };
-
+      const my = txs.filter(t => t.customerId === user.customerId);
+      if(!my.length){ list.innerHTML = '<div class="text-white/60">No transactions yet.</div>'; return; }
+      list.innerHTML = my.slice().reverse().map(t => `<div class="p-2 rounded bg-white/4 border border-white/6">₹${t.amount} — ${new Date(t.date).toLocaleString()}</div>`).join('');
+    }
     render();
 
-    document.getElementById('rechargeForm').addEventListener('submit', e => {
+    document.getElementById('rechargeForm').addEventListener('submit', e=>{
       e.preventDefault();
-      const amount = Number(document.getElementById('amount').value);
-      if (!amount) return alert('Enter a valid amount');
-      const tx = { amount, date: new Date().toISOString() };
+      const amt = Number(document.getElementById('amount').value);
+      if(!amt){ alert('Enter valid amount'); return; }
+      const tx = { customerId: user.customerId, amount: amt, date: new Date().toISOString(), meter: user.meter, reference: 'REF-'+Math.random().toString(36).slice(2,9).toUpperCase() };
       txs.push(tx);
-      localStorage.setItem(key, JSON.stringify(txs));
+      localStorage.setItem(KEY, JSON.stringify(txs));
       render();
-      document.getElementById('msg').textContent = 'Recharge successful!';
+      document.getElementById('msg').textContent = 'Recharge successful — ' + tx.reference;
       document.getElementById('amount').value = '';
+      setTimeout(()=> document.getElementById('msg').textContent='', 4000);
     });
 
-    document.getElementById('logout').addEventListener('click', () => {
+    document.getElementById('logout').addEventListener('click', ()=>{
       localStorage.removeItem('sc_user');
-      window.location.href = 'index.html';
+      location.href = 'index.html';
     });
+
+    // quick buttons
+    document.getElementById('q50').addEventListener('click', ()=> document.getElementById('amount').value = 50);
+    document.getElementById('q100').addEventListener('click', ()=> document.getElementById('amount').value = 100);
+    document.getElementById('q500').addEventListener('click', ()=> document.getElementById('amount').value = 500);
   </script>
 </body>
 </html>
