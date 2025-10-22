@@ -1,87 +1,203 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - India Smart Energy</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-.fade-in { animation: fadeIn 0.8s ease-in-out; }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartCity — Pay Electricity Bill</title>
+
+  <!-- Tailwind CDN (quick) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* subtle custom styles & animations */
+    :root{
+      --accent:#0ea5a4; /* teal-ish */
+      --glass-bg: rgba(255,255,255,0.6);
+    }
+
+    .bg-gradient-hero{
+      background: linear-gradient(135deg, rgba(14,165,164,0.08) 0%, rgba(99,102,241,0.04) 50%, rgba(14,165,164,0.04) 100%);
+      backdrop-filter: blur(2px);
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .float-slow { animation: float 5s ease-in-out infinite; }
+
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.6s ease forwards;
+      animation-delay: 0.1s;
+    }
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      border: 1px solid rgba(255,255,255,0.45);
+      box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+      backdrop-filter: blur(6px);
+    }
+
+    /* small helper for input focus ring with accent */
+    .focus-accent:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(14,165,164,0.12);
+      border-color: var(--accent);
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 min-h-screen flex flex-col">
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
 
-<header class="bg-white shadow-md p-4">
-  <div class="max-w-6xl mx-auto flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-indigo-700">⚡ My Dashboard</h1>
-    <button id="logoutBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg">Logout</button>
-  </div>
-</header>
+  <main class="min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
 
-<main class="flex-1 p-6 fade-in">
-  <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8">
-    <h2 class="text-2xl font-semibold text-indigo-700 mb-4">Welcome, <span id="userName"></span></h2>
-    <p class="text-gray-600 mb-2">Customer ID: <span id="cccNumber" class="font-mono text-indigo-700"></span></p>
-    <p class="text-gray-600 mb-6">Email: <span id="userEmail"></span></p>
+      <!-- Left: marketing / hero -->
+      <section class="p-8 md:p-12 rounded-2xl bg-white glass float-slow">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-sky-500 flex items-center justify-center text-white text-lg font-bold shadow-lg">SC</div>
+          <div>
+            <h1 class="text-xl md:text-2xl font-semibold">SmartCity — Electricity Payments</h1>
+            <p class="text-xs text-slate-500 -mt-1">Pay, track and manage your meter recharges — fast & secure.</p>
+          </div>
+        </div>
 
-    <h3 class="text-lg font-semibold mb-2">Recharge Meter</h3>
-    <form id="rechargeForm" class="space-y-3 mb-6">
-      <input type="number" id="amount" placeholder="Enter amount (₹)" required class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-400">
-      <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg">Recharge</button>
-    </form>
+        <h2 class="text-2xl font-bold mb-3 fade-in-up">Power your home. Pay in seconds.</h2>
+        <p class="text-slate-600 mb-6 fade-in-up" style="animation-delay:0.15s">
+          Modern payments for municipal electricity. This demo simulates recharges and stores history in your browser.
+        </p>
 
-    <h3 class="text-lg font-semibold mb-2">Previous Transactions</h3>
-    <ul id="transactionsList" class="space-y-2 text-sm text-gray-700"></ul>
-  </div>
-</main>
+        <ul class="space-y-3 text-sm text-slate-700">
+          <li class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 font-semibold">✓</div>
+            <div><strong>Simple login</strong> — email & password (demo accounts provided).</div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-sky-50 flex items-center justify-center text-sky-600 font-semibold">⤴</div>
+            <div><strong>Track recharges</strong> — view your CCC number and past transactions.</div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 font-semibold">⚡</div>
+            <div><strong>Responsive & animated</strong> — looks good on mobile and desktop.</div>
+          </li>
+        </ul>
 
-<footer class="bg-white text-center p-4 text-gray-600">
-  <p>© 2025 India Smart Energy. All rights reserved.</p>
-</footer>
+        <div class="mt-8">
+          <a href="#login" class="inline-block px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-xl shadow hover:scale-[1.01] transition transform">Get started — Login</a>
+        </div>
 
-<script>
-let currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
-let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        <p class="mt-6 text-xs text-slate-400">Demo accounts: <strong>user@example.com / pass123</strong> and <strong>raj@smartcity.com / raj2025</strong>.</p>
+      </section>
 
-if (!currentUser) {
-  window.location.href = "index.html";
-}
+      <!-- Right: login card -->
+      <section id="login" class="p-6 rounded-2xl bg-white shadow-md glass">
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold">Welcome back</h3>
+          <p class="text-sm text-slate-500">Sign in with your email to access your account</p>
+        </div>
 
-document.getElementById("userName").textContent = currentUser.name;
-document.getElementById("userEmail").textContent = currentUser.email;
-document.getElementById("cccNumber").textContent = currentUser.ccc;
+        <form id="loginForm" class="space-y-4" autocomplete="on">
+          <div>
+            <label class="text-xs font-medium text-slate-600">Email</label>
+            <input id="email" type="email" required
+                   class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-200 focus-accent focus:border-transparent" placeholder="you@example.com" />
+          </div>
 
-function renderTransactions() {
-  const list = document.getElementById("transactionsList");
-  const userTx = transactions.filter(t => t.user === currentUser.name);
-  if (userTx.length === 0) {
-    list.innerHTML = "<li>No previous transactions.</li>";
-  } else {
-    list.innerHTML = userTx.map(tx => `<li>₹${tx.amount} — ${tx.date}</li>`).join("");
-  }
-}
+          <div>
+            <label class="text-xs font-medium text-slate-600">Password</label>
+            <div class="relative">
+              <input id="password" type="password" required
+                     class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-200 focus-accent focus:border-transparent" placeholder="••••••••" />
+            </div>
+          </div>
 
-document.getElementById("rechargeForm").onsubmit = function(e) {
-  e.preventDefault();
-  const amt = parseFloat(document.getElementById("amount").value);
-  if (isNaN(amt) || amt <= 0) return;
-  const tx = { id: Date.now(), user: currentUser.name, amount: amt, date: new Date().toLocaleString() };
-  transactions.push(tx);
-  localStorage.setItem("transactions", JSON.stringify(transactions));
-  renderTransactions();
-  document.getElementById("amount").value = "";
-};
+          <div class="flex items-center justify-between text-sm">
+            <label class="flex items-center gap-2 text-slate-600">
+              <input id="remember" type="checkbox" class="h-4 w-4" /> Remember
+            </label>
+            <a class="text-teal-600 hover:underline text-sm" href="#" onclick="alert('Demo: no password reset')">Forgot?</a>
+          </div>
 
-document.getElementById("logoutBtn").onclick = function() {
-  localStorage.removeItem("loggedInUser");
-  window.location.href = "index.html";
-};
+          <div>
+            <div id="loginError" class="text-sm text-red-600 min-h-[1.2em]"></div>
+            <button type="submit" class="w-full mt-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold shadow hover:scale-[1.01] transition-transform">
+              <!-- small animated dot -->
+              <svg id="btnSpinner" class="w-4 h-4 opacity-0 transition-opacity" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="40" stroke-dashoffset="10"/>
+              </svg>
+              Sign in
+            </button>
+          </div>
 
-renderTransactions();
-</script>
+          <div class="pt-3 text-center text-xs text-slate-500">Or <a href="#" class="text-teal-600 underline" onclick="fillDemo()">use demo credentials</a></div>
+        </form>
+
+        <div class="mt-6 text-xs text-slate-400">This is a demo static site — no backend. For production you'd connect to a secure API & payment gateway.</div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Mock users
+    const USERS = [
+      { email: 'user@example.com', password: 'pass123', customerId: 'CCC-1001', name: 'Asha Patel', meter: 'MTR-908172' },
+      { email: 'raj@smartcity.com', password: 'raj2025', customerId: 'CCC-2077', name: 'Raj Kumar', meter: 'MTR-118291' }
+    ];
+
+    const form = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const emailEl = document.getElementById('email');
+    const passwordEl = document.getElementById('password');
+    const rememberEl = document.getElementById('remember');
+
+    // quick animation for button (show spinner)
+    function setBtnLoading(on){
+      const spinner = document.getElementById('btnSpinner');
+      spinner.style.opacity = on ? '1' : '0';
+    }
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      loginError.textContent = '';
+      setBtnLoading(true);
+
+      const email = emailEl.value.trim();
+      const password = passwordEl.value;
+
+      // simulate small delay
+      setTimeout(()=>{
+        setBtnLoading(false);
+        const found = USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+        if(!found){
+          loginError.textContent = 'Invalid email or password.';
+          return;
+        }
+
+        // store session (in production: use secure cookies / JWT)
+        localStorage.setItem('sc_user', JSON.stringify(found));
+        if(rememberEl.checked) localStorage.setItem('sc_remember', '1'); else localStorage.removeItem('sc_remember');
+
+        // go to dashboard
+        location.href = 'dashboard.html';
+      }, 700);
+    });
+
+    function fillDemo(){
+      emailEl.value = 'user@example.com';
+      passwordEl.value = 'pass123';
+    }
+
+    // If user already logged in, send straight to dashboard
+    (function(){
+      const sess = localStorage.getItem('sc_user');
+      if(sess) location.href = 'dashboard.html';
+    })();
+  </script>
 </body>
 </html>
