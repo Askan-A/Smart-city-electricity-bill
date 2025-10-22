@@ -3,42 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartCity — Meter Login</title>
+  <title>SmartCity — Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center min-h-screen">
-  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-    <div class="text-center mb-6">
-      <div class="inline-block w-14 h-14 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl text-2xl font-bold flex items-center justify-center">SC</div>
-      <h1 class="text-2xl font-semibold mt-3">SmartCity Login</h1>
-      <p class="text-sm text-slate-500">Login to recharge your electricity meter</p>
-    </div>
-    <form id="loginForm" class="space-y-4">
-      <input id="email" type="email" placeholder="Email" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-cyan-400">
-      <input id="password" type="password" placeholder="Password" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-cyan-400">
-      <p id="error" class="text-red-600 text-sm"></p>
-      <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold py-3 rounded-lg hover:scale-[1.02] transition-transform">Login</button>
-    </form>
-    <p class="mt-4 text-xs text-slate-400 text-center">Demo: <b>user@example.com / pass123</b></p>
+<body class="bg-gradient-to-br from-blue-50 to-cyan-50 min-h-screen">
+  <div class="max-w-4xl mx-auto p-6">
+    <header class="flex justify-between items-center mb-6">
+      <h1 class="text-xl font-semibold">SmartCity Dashboard</h1>
+      <button id="logout" class="bg-red-500 text-white px-4 py-2 rounded-lg">Logout</button>
+    </header>
+
+    <section class="bg-white p-6 rounded-2xl shadow-md mb-6">
+      <h2 id="userName" class="text-lg font-bold mb-2">Welcome</h2>
+      <p>Customer ID: <span id="ccc"></span></p>
+      <p>Meter No: <span id="meter"></span></p>
+    </section>
+
+    <section class="bg-white p-6 rounded-2xl shadow-md mb-6">
+      <h3 class="text-lg font-semibold mb-2">Recharge Meter</h3>
+      <form id="rechargeForm" class="flex gap-2">
+        <input id="amount" type="number" placeholder="Amount ₹" class="border px-3 py-2 rounded-lg w-full">
+        <button class="bg-cyan-500 text-white px-4 py-2 rounded-lg">Recharge</button>
+      </form>
+      <p id="msg" class="text-green-600 text-sm mt-2"></p>
+    </section>
+
+    <section class="bg-white p-6 rounded-2xl shadow-md">
+      <h3 class="text-lg font-semibold mb-3">Transaction History</h3>
+      <div id="txList" class="space-y-2"></div>
+    </section>
   </div>
 
   <script>
-    const USERS = [
-      { email: 'user@example.com', password: 'pass123', customerId: 'CCC-1001', name: 'Asha Patel', meter: 'MTR-908172' },
-      { email: 'raj@smartcity.com', password: 'raj2025', customerId: 'CCC-2077', name: 'Raj Kumar', meter: 'MTR-118291' }
-    ];
+    const user = JSON.parse(localStorage.getItem('sc_user') || 'null');
+    if (!user) window.location.href = 'meter-login.html';
 
-    document.getElementById('loginForm').addEventListener('submit', e => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const user = USERS.find(u => u.email === email && u.password === password);
-      if (!user) {
-        document.getElementById('error').textContent = 'Invalid email or password';
+    document.getElementById('userName').textContent = 'Welcome, ' + user.name;
+    document.getElementById('ccc').textContent = user.customerId;
+    document.getElementById('meter').textContent = user.meter;
+
+    const key = 'sc_transactions';
+    let txs = JSON.parse(localStorage.getItem(key) || '[]');
+
+    const render = () => {
+      const list = document.getElementById('txList');
+      if (txs.length === 0) {
+        list.innerHTML = '<p class="text-slate-500">No transactions yet.</p>';
         return;
       }
-      localStorage.setItem('sc_user', JSON.stringify(user));
-      window.location.href = 'dashboard.html';
+      list.innerHTML = txs.map(t => `
+        <div class="p-3 bg-slate-50 rounded-lg border">
+          ₹${t.amount} — ${new Date(t.date).toLocaleString()}
+        </div>
+      `).join('');
+    };
+
+    render();
+
+    document.getElementById('rechargeForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const amount = Number(document.getElementById('amount').value);
+      if (!amount) return alert('Enter a valid amount');
+      const tx = { amount, date: new Date().toISOString() };
+      txs.push(tx);
+      localStorage.setItem(key, JSON.stringify(txs));
+      render();
+      document.getElementById('msg').textContent = 'Recharge successful!';
+      document.getElementById('amount').value = '';
+    });
+
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('sc_user');
+      window.location.href = 'index.html';
     });
   </script>
 </body>
