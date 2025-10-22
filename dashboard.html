@@ -1,188 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard — SmartCity</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartCity — Meter Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    :root{ --accent:#06b6d4; }
-    .glass { background: rgba(255,255,255,0.66); backdrop-filter: blur(6px); border-radius: 14px; }
-    @keyframes pop { from { transform: translateY(6px) scale(.99); opacity:0 } to { transform: translateY(0) scale(1); opacity:1 } }
-    .pop-in { animation: pop .36s ease both; }
-    .txn-appear { animation: pop .28s cubic-bezier(.2,.9,.3,1) both; }
-    .chip { background: rgba(6,182,212,0.08); color: #065f66; padding: .35rem .6rem; border-radius: 999px; font-weight:600; font-size:.85rem; }
-  </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-
-  <div class="max-w-6xl mx-auto p-6">
-    <header class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-sky-500 flex items-center justify-center text-white font-bold">SC</div>
-        <div>
-          <h1 class="text-xl font-semibold">SmartCity — Account</h1>
-          <p class="text-sm text-slate-500">Manage recharges & view history</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <div id="nameBadge" class="chip">User</div>
-        <button id="logoutBtn" class="px-3 py-2 rounded-lg border">Logout</button>
-      </div>
-    </header>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Left column: account summary -->
-      <aside class="lg:col-span-1 glass p-5 pop-in">
-        <h3 class="text-sm text-slate-500">Account</h3>
-        <div class="mt-3">
-          <div class="text-slate-700 text-lg font-semibold" id="displayName">—</div>
-          <div class="text-sm text-slate-500 mt-1">Customer ID <span class="font-mono" id="ccc">—</span></div>
-          <div class="text-sm text-slate-500 mt-1">Meter No <span class="font-mono" id="meterNo">—</span></div>
-        </div>
-
-        <div class="mt-6">
-          <h4 class="text-sm text-slate-500">Quick actions</h4>
-          <div class="mt-3 space-y-3">
-            <button id="quick50" class="w-full px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200">Recharge ₹50</button>
-            <button id="quick100" class="w-full px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200">Recharge ₹100</button>
-            <button id="quick500" class="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 text-white">Recharge ₹500</button>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Middle: recharge -->
-      <section class="lg:col-span-2 space-y-6">
-        <div class="glass p-6 pop-in">
-          <h3 class="text-lg font-semibold">Recharge Meter</h3>
-          <p class="text-sm text-slate-500">Make a quick top-up to your electricity meter.</p>
-
-          <form id="rechargeForm" class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
-            <div class="md:col-span-2">
-              <label class="text-xs text-slate-600">Amount (₹)</label>
-              <input id="amount" type="number" min="1" value="100" required class="mt-1 w-full px-4 py-2 rounded-lg border border-slate-200" />
-            </div>
-
-            <div>
-              <button class="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 text-white" type="submit">Pay</button>
-            </div>
-          </form>
-
-          <div id="rechargeMsg" class="mt-3 text-sm text-green-600"></div>
-        </div>
-
-        <div class="glass p-6">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold">Transaction history</h3>
-            <div class="text-sm text-slate-500">Showing last <span id="txCount">0</span></div>
-          </div>
-
-          <div class="mt-4" id="txList">
-            <!-- transactions will render here -->
-            <div class="text-sm text-slate-500">No transactions yet.</div>
-          </div>
-        </div>
-
-        <div class="glass p-6 text-sm text-slate-500">
-          <strong>Note:</strong> This is a demo static site. For production usage integrate secure authentication, server-side storage, and a payment gateway.
-        </div>
-      </section>
+<body class="bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <div class="text-center mb-6">
+      <div class="inline-block w-14 h-14 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl text-2xl font-bold flex items-center justify-center">SC</div>
+      <h1 class="text-2xl font-semibold mt-3">SmartCity Login</h1>
+      <p class="text-sm text-slate-500">Login to recharge your electricity meter</p>
     </div>
+    <form id="loginForm" class="space-y-4">
+      <input id="email" type="email" placeholder="Email" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-cyan-400">
+      <input id="password" type="password" placeholder="Password" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-cyan-400">
+      <p id="error" class="text-red-600 text-sm"></p>
+      <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold py-3 rounded-lg hover:scale-[1.02] transition-transform">Login</button>
+    </form>
+    <p class="mt-4 text-xs text-slate-400 text-center">Demo: <b>user@example.com / pass123</b></p>
   </div>
 
   <script>
-    // Restore user session or redirect to login
-    const session = localStorage.getItem('sc_user');
-    if(!session){
-      // redirect to login
-      location.href = 'index.html';
-    }
+    const USERS = [
+      { email: 'user@example.com', password: 'pass123', customerId: 'CCC-1001', name: 'Asha Patel', meter: 'MTR-908172' },
+      { email: 'raj@smartcity.com', password: 'raj2025', customerId: 'CCC-2077', name: 'Raj Kumar', meter: 'MTR-118291' }
+    ];
 
-    const user = JSON.parse(session);
-    document.getElementById('displayName').textContent = user.name;
-    document.getElementById('ccc').textContent = user.customerId;
-    document.getElementById('meterNo').textContent = user.meter;
-    document.getElementById('nameBadge').textContent = user.name.split(' ')[0];
-
-    // transactions key
-    const TX_KEY = 'sc_recharges';
-    let txns = JSON.parse(localStorage.getItem(TX_KEY) || '[]');
-
-    const txListEl = document.getElementById('txList');
-    const txCountEl = document.getElementById('txCount');
-    const msgEl = document.getElementById('rechargeMsg');
-
-    function renderTx(){
-      const myTx = txns.filter(t => t.customerId === user.customerId);
-      txCountEl.textContent = myTx.length;
-      if(myTx.length === 0){
-        txListEl.innerHTML = '<div class="text-sm text-slate-500">No transactions yet.</div>';
+    document.getElementById('loginForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const user = USERS.find(u => u.email === email && u.password === password);
+      if (!user) {
+        document.getElementById('error').textContent = 'Invalid email or password';
         return;
       }
-
-      // show most recent first
-      txListEl.innerHTML = myTx.slice().reverse().map(t => {
-        const date = new Date(t.date);
-        return `
-          <div class="txn-appear p-3 border rounded-lg mb-3 bg-white">
-            <div class="flex justify-between items-start gap-3">
-              <div>
-                <div class="text-slate-800 font-medium">₹${t.amount}</div>
-                <div class="text-xs text-slate-500 mt-1">Ref: <span class="font-mono">${t.reference}</span></div>
-              </div>
-              <div class="text-right text-xs text-slate-500">
-                <div>${date.toLocaleString()}</div>
-                <div class="mt-1">Meter: <span class="font-mono">${t.meter}</span></div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    renderTx();
-
-    // recharge form
-    document.getElementById('rechargeForm').addEventListener('submit', (e)=>{
-      e.preventDefault();
-      msgEl.textContent = '';
-      const val = Number(document.getElementById('amount').value);
-      if(!val || val <= 0) { msgEl.textContent = 'Enter a valid amount'; msgEl.style.color = 'red'; return; }
-
-      // simulate payment & push tx
-      const tx = {
-        id: Date.now(),
-        customerId: user.customerId,
-        name: user.name,
-        meter: user.meter,
-        amount: val,
-        date: new Date().toISOString(),
-        reference: 'REF-' + Math.random().toString(36).slice(2,9).toUpperCase()
-      };
-
-      txns.push(tx);
-      localStorage.setItem(TX_KEY, JSON.stringify(txns));
-      renderTx();
-      msgEl.style.color = 'green';
-      msgEl.textContent = `Successfully recharged ₹${val}. Ref ${tx.reference}`;
-
-      // small confetti-like CSS (quick)
-      setTimeout(()=> msgEl.textContent = '', 4000);
-    });
-
-    // quick recharge buttons
-    document.getElementById('quick50').addEventListener('click', ()=> { document.getElementById('amount').value = 50; });
-    document.getElementById('quick100').addEventListener('click', ()=> { document.getElementById('amount').value = 100; });
-    document.getElementById('quick500').addEventListener('click', ()=> { document.getElementById('amount').value = 500; });
-
-    // logout
-    document.getElementById('logoutBtn').addEventListener('click', ()=>{
-      localStorage.removeItem('sc_user');
-      // optional: clear remember flag if used
-      location.href = 'index.html';
+      localStorage.setItem('sc_user', JSON.stringify(user));
+      window.location.href = 'dashboard.html';
     });
   </script>
 </body>
