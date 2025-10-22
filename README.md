@@ -1,18 +1,24 @@
-# India Smart Energy Website
+# SmartCity — Electricity Bill Demo (Static)
 
-A clean and modern electricity bill payment portal with smooth animations.
+This is a static demo site for paying electricity bills (client-side simulation).
+It contains:
 
-### Features
-- Home and login page (`index.html`)
-- Dashboard with recharge and transaction history (`dashboard.html`)
-- LocalStorage to track user recharges
-- TailwindCSS styling and animations
+- `index.html` — Home + Login (email + password)
+- `dashboard.html` — Account dashboard showing CCC number, meter number and transaction history
+- All data is stored in `localStorage` for demo purposes.
 
-### Demo Accounts
-- demo@indiaenergy.com / energy123
-- user@smartcity.com / pass2025
+## Demo Credentials
+- `user@example.com` / `pass123` (Asha Patel — CCC-1001)
+- `raj@smartcity.com` / `raj2025` (Raj Kumar — CCC-2077)
 
-### How to Use
-1. Upload all files to your GitHub repository.
-2. Enable GitHub Pages in repo settings.
-3. Visit your GitHub Pages URL to see your site live.
+## How to use
+1. Create a new GitHub repository (public or private).
+2. Drag & drop these files into the repo (or upload ZIP).
+3. Enable GitHub Pages (Settings → Pages) and choose the main branch root.
+4. Visit the published URL.
+
+> ⚠️ **Important:** This is a demo. For production use you must:
+> - Implement a secure backend (authentication, password hashing).
+> - Store transactions server-side (database).
+> - Integrate a secure payment gateway (Razorpay / PayU / Stripe).
+> - Use HTTPS and follow PCI/DIP compliance when handling payments.
