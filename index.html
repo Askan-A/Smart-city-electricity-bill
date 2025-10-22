@@ -3,259 +3,229 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SmartCity Portal — Home</title>
-
-  <!-- Tailwind -->
+  <title>SmartCity — Electricity Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* Base layout */
-    :root { --glass: rgba(255,255,255,0.6); --glass-strong: rgba(255,255,255,0.85); }
-    html,body { height:100%; }
+    :root {
+      --gold: #d4af37;
+      --teal: #0ea5a4;
+    }
+
     body {
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
-      color:#0f172a;
-      background: #000;
+      background: url('assets/bg.png') center/cover fixed no-repeat;
+      min-height: 100vh;
       overflow-x: hidden;
+      position: relative;
     }
 
-    /* Parallax background (fixed) */
-    .parallax {
+    /* Particle drift animation */
+    .particles {
       position: fixed;
       inset: 0;
-      background-image: url('assets/black-gold.png');
-      background-size: cover;
-      background-position: center top;
-      background-attachment: fixed;
-      z-index: -3;
-      transform: translateZ(0);
-    }
-
-    /* dark overlay for readability */
-    .bg-dim {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.25));
-      z-index: -2;
+      overflow: hidden;
+      z-index: 0;
       pointer-events: none;
     }
 
-    /* Canvas particles sit above image but behind content */
-    #particleCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      mix-blend-mode: screen; /* gives glowing on dark bg */
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--gold);
+      opacity: 0.7;
+      border-radius: 50%;
+      animation: drift 12s linear infinite;
     }
 
-    /* Glass panels */
+    @keyframes drift {
+      from { transform: translateY(100vh) scale(0.8); opacity: 0; }
+      25% { opacity: 0.6; }
+      75% { opacity: 0.8; }
+      to { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
     .glass {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.06);
-      backdrop-filter: blur(8px) saturate(120%);
-      color: #f8fafc;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
     }
-    .card {
-      transition: transform .36s cubic-bezier(.2,.9,.3,1), box-shadow .36s;
-      transform-origin: center;
-      will-change: transform;
+
+    /* Scroll fade-in */
+    .hidden-on-load {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
     }
-    .card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
 
-    /* service fade-in */
-    .fade-up { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
-    .fade-up.in { opacity: 1; transform: translateY(0); }
-
-    /* icons color */
-    .icon-cyan { color: #06b6d4; }
-    .icon-blue { color: #3b82f6; }
-    .icon-rose { color: #fb7185; }
-
-    /* hero */
-    .hero {
-      padding: 6.5rem 1rem 6rem;
-      text-align: center;
-      color: #fff;
+    .visible {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
     }
-    .hero h1 { font-size: clamp(1.6rem, 3.6vw, 3rem); font-weight: 800; letter-spacing: -0.02em; }
-    .hero p { margin-top: .75rem; color: rgba(255,255,255,0.85); max-width: 56ch; margin-left: auto; margin-right: auto; }
 
-    /* header */
-    header.site-header { position: sticky; top: 0; z-index: 40; backdrop-filter: blur(6px); background: linear-gradient(90deg, rgba(0,0,0,0.18), rgba(0,0,0,0.08)); padding: 0.7rem 1rem; }
-
-    /* small screen tweaks */
-    @media (max-width: 640px) {
-      .hero { padding-top:4.5rem; padding-bottom:4rem; }
-      .grid-cols-services { grid-template-columns: repeat(1, minmax(0,1fr)); }
+    /* Hover and click animations */
+    .widget {
+      transition: all 0.5s ease;
+      cursor: pointer;
     }
+    .widget:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(212,175,55,0.3);
+    }
+    .widget:active {
+      transform: scale(0.97);
+      box-shadow: 0 0 10px rgba(212,175,55,0.5);
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.8s ease both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gold-text { color: var(--gold); }
   </style>
 </head>
-<body>
 
-  <!-- Parallax background + overlay + particle canvas -->
-  <div class="parallax" aria-hidden="true"></div>
-  <div class="bg-dim" aria-hidden="true"></div>
-  <canvas id="particleCanvas" aria-hidden="true"></canvas>
+<body class="text-white relative">
+  <!-- Gold particle overlay -->
+  <div class="particles" id="particles"></div>
 
-  <!-- Header -->
-  <header class="site-header">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r from-yellow-400 via-amber-500 to-rose-400 text-black font-bold">SC</div>
-        <div class="text-white font-semibold">SmartCity Portal</div>
-      </div>
-      <nav>
-        <a href="#services" class="text-white text-sm hover:underline">Services</a>
-      </nav>
+  <!-- Navbar -->
+  <header class="w-full px-6 py-4 flex items-center justify-between text-lg text-white font-semibold">
+    <div class="flex items-center gap-3">
+      <img src="https://img.icons8.com/?size=80&id=1484&format=png&color=d4af37" alt="logo" class="w-10 h-10">
+      <span class="text-2xl font-bold gold-text">SmartCity</span>
     </div>
+    <nav class="space-x-4 text-sm">
+      <a href="#services" class="hover:text-[var(--gold)] transition">Services</a>
+      <a href="#login" class="hover:text-[var(--gold)] transition">Login</a>
+    </nav>
   </header>
 
-  <!-- HERO -->
-  <main>
-    <section class="hero">
-      <div class="max-w-4xl mx-auto">
-        <h1>SmartCity — Utilities, simplified</h1>
-        <p class="mt-4">Pay electricity, water, mobile recharge and more — fast, secure, and beautiful. Try the interactive service cards below. (Click “Recharge Your Meter” to sign in.)</p>
-        <div class="mt-8">
-          <a href="#services" class="inline-block px-6 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold shadow-lg hover:scale-[1.03] transform transition">Explore services</a>
-        </div>
+  <!-- Hero Section -->
+  <section class="flex flex-col items-center justify-center text-center min-h-[90vh] relative z-10">
+    <h1 class="text-4xl md:text-6xl font-bold mb-6 fade-in-up gold-text">Powering a Smarter Tomorrow</h1>
+    <p class="max-w-2xl text-slate-200 text-lg fade-in-up">Manage your city utilities in one seamless, modern portal — electricity, water, mobile, and more.</p>
+    <a href="#services" class="mt-10 inline-block bg-[var(--gold)] text-black px-8 py-3 rounded-full font-semibold hover:scale-105 transition-all">Explore Services</a>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="relative z-10 py-24 bg-black/60 backdrop-blur-sm">
+    <div class="max-w-6xl mx-auto text-center mb-12">
+      <h2 class="text-3xl font-bold gold-text mb-3">Our Services</h2>
+      <p class="text-slate-300">Choose from a range of SmartCity utilities and payments</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-8 md:px-12">
+      <div class="widget glass p-6 rounded-xl hidden-on-load" onclick="goToLogin()">
+        <img src="https://img.icons8.com/?size=100&id=81212&format=png&color=d4af37" class="w-12 mb-3 mx-auto">
+        <h3 class="text-xl font-semibold mb-2 gold-text">Recharge Meter</h3>
+        <p class="text-sm text-slate-300">Top-up your electricity meter instantly and securely.</p>
       </div>
-    </section>
 
-    <!-- SERVICES -->
-    <section id="services" class="py-16">
-      <div class="max-w-6xl mx-auto px-4">
-        <h2 class="text-2xl font-bold text-white mb-6 text-center">Our Services</h2>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <!-- Electricity (interactive link) -->
-          <a href="meter-login.html" class="fade-up card p-6 rounded-2xl glass" data-anim>
-            <div class="flex items-center justify-center mb-3">
-              <i data-lucide="zap" class="w-10 h-10 icon-cyan"></i>
-            </div>
-            <h3 class="text-lg font-semibold mb-1">Recharge Your Meter</h3>
-            <p class="text-sm opacity-80">Login, top-up and view transaction history.</p>
-          </a>
-
-          <!-- Water (simulated) -->
-          <div class="fade-up card p-6 rounded-2xl glass" data-anim onclick="alert('This is a demo card — mobile & water are simulated.')">
-            <div class="flex items-center justify-center mb-3">
-              <i data-lucide="droplets" class="w-10 h-10 icon-blue"></i>
-            </div>
-            <h3 class="text-lg font-semibold mb-1">Pay Water Bill</h3>
-            <p class="text-sm opacity-80">Simulated payment flow and receipts.</p>
-          </div>
-
-          <!-- Mobile -->
-          <div class="fade-up card p-6 rounded-2xl glass" data-anim onclick="alert('Mobile recharge demo — integrate gateway for live payments.')">
-            <div class="flex items-center justify-center mb-3">
-              <i data-lucide="smartphone" class="w-10 h-10 icon-rose"></i>
-            </div>
-            <h3 class="text-lg font-semibold mb-1">Mobile Recharge</h3>
-            <p class="text-sm opacity-80">Recharge phone plans quickly (demo).</p>
-          </div>
-        </div>
+      <div class="widget glass p-6 rounded-xl hidden-on-load">
+        <img src="https://img.icons8.com/?size=100&id=1063&format=png&color=d4af37" class="w-12 mb-3 mx-auto">
+        <h3 class="text-xl font-semibold mb-2 gold-text">Pay Water Bill</h3>
+        <p class="text-sm text-slate-300">Quickly settle your water usage bills with one click.</p>
       </div>
-    </section>
 
-    <footer class="py-8 text-center text-white/80">
-      © 2025 SmartCity Portal
-    </footer>
-  </main>
+      <div class="widget glass p-6 rounded-xl hidden-on-load">
+        <img src="https://img.icons8.com/?size=100&id=16349&format=png&color=d4af37" class="w-12 mb-3 mx-auto">
+        <h3 class="text-xl font-semibold mb-2 gold-text">Mobile Recharge</h3>
+        <p class="text-sm text-slate-300">Recharge your prepaid mobile instantly from one portal.</p>
+      </div>
 
-  <!-- Lucide icons -->
-  <script> lucide.createIcons(); </script>
+      <div class="widget glass p-6 rounded-xl hidden-on-load">
+        <img src="https://img.icons8.com/?size=100&id=3164&format=png&color=d4af37" class="w-12 mb-3 mx-auto">
+        <h3 class="text-xl font-semibold mb-2 gold-text">Property Tax</h3>
+        <p class="text-sm text-slate-300">Pay your city property taxes online with zero hassle.</p>
+      </div>
+    </div>
+  </section>
 
-  <!-- Small JS: particles + scroll fade-in -->
+  <!-- Login Section -->
+  <section id="login" class="min-h-[70vh] flex flex-col items-center justify-center bg-black/60">
+    <div class="glass p-8 rounded-2xl max-w-md w-full text-center">
+      <h3 class="text-2xl font-bold gold-text mb-2">Login to Continue</h3>
+      <p class="text-sm text-slate-300 mb-6">Enter your registered email and password</p>
+
+      <form id="loginForm" class="space-y-4 text-left">
+        <input id="email" type="email" placeholder="Email" required class="w-full px-4 py-2 rounded-lg bg-black/30 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-[var(--gold)]" />
+        <input id="password" type="password" placeholder="Password" required class="w-full px-4 py-2 rounded-lg bg-black/30 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-[var(--gold)]" />
+        <div id="loginError" class="text-sm text-red-500 min-h-[1.2em]"></div>
+        <button type="submit" class="w-full py-3 bg-[var(--gold)] text-black font-semibold rounded-lg hover:scale-[1.02] transition-transform">Sign in</button>
+      </form>
+
+      <button onclick="fillDemo()" class="mt-4 text-sm text-[var(--gold)] underline">Auto-fill Demo Account</button>
+    </div>
+  </section>
+
+  <footer class="text-center py-6 bg-black/70 text-slate-400 text-sm">
+    Made with 💡 by <span class="gold-text">SmartCity</span>
+  </footer>
+
   <script>
-    // Particles canvas (subtle gold twinkle/drift)
-    (function () {
-      const canvas = document.getElementById('particleCanvas');
-      const ctx = canvas.getContext('2d');
-      let w = canvas.width = innerWidth;
-      let h = canvas.height = innerHeight;
-      const DPR = window.devicePixelRatio || 1;
-      canvas.width = innerWidth * DPR;
-      canvas.height = innerHeight * DPR;
-      canvas.style.width = innerWidth + 'px';
-      canvas.style.height = innerHeight + 'px';
-      ctx.scale(DPR, DPR);
+    // Generate drifting gold particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 35; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = (Math.random() * 12) + 's';
+      p.style.animationDuration = (8 + Math.random() * 8) + 's';
+      p.style.opacity = Math.random();
+      particlesContainer.appendChild(p);
+    }
 
-      const particles = [];
-      const PARTICLE_COUNT = Math.max(24, Math.floor((w*h)/200000)); // responsive count
-
-      function rand(min, max){ return Math.random()*(max-min)+min; }
-
-      for(let i=0;i<PARTICLE_COUNT;i++){
-        particles.push({
-          x: rand(0, w),
-          y: rand(0, h/2), // heavier at top
-          r: rand(0.8, 3.6),
-          a: rand(0.2, 0.95),
-          vx: rand(-0.02, 0.6)* (Math.random()<0.5 ? -1 : 1),
-          vy: rand(0.02, 0.15),
-          twinkle: Math.random()*Math.PI*2
-        });
-      }
-
-      function draw(){
-        ctx.clearRect(0,0,innerWidth,innerHeight);
-        for(const p of particles){
-          p.x += p.vx * 0.6;
-          p.y += p.vy * 0.8 + Math.sin(p.twinkle)*0.02;
-          p.twinkle += 0.02;
-
-          if(p.x < -50) p.x = innerWidth+50;
-          if(p.x > innerWidth+50) p.x = -50;
-          if(p.y > innerHeight+50) p.y = -50;
-
-          // glow
-          const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r*6);
-          grd.addColorStop(0, 'rgba(255,223,86,' + (p.a*0.9) + ')');
-          grd.addColorStop(0.35, 'rgba(255,200,60,' + (p.a*0.45) + ')');
-          grd.addColorStop(1, 'rgba(255,180,40,0)');
-          ctx.fillStyle = grd;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r*6, 0, Math.PI*2);
-          ctx.fill();
-
-          // small center
-          ctx.fillStyle = 'rgba(255,245,200,' + p.a + ')';
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          ctx.fill();
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
         }
-        requestAnimationFrame(draw);
-      }
-      draw();
-
-      // handle resize
-      window.addEventListener('resize', ()=>{
-        const DPR = window.devicePixelRatio || 1;
-        canvas.width = innerWidth * DPR;
-        canvas.height = innerHeight * DPR;
-        canvas.style.width = innerWidth + 'px';
-        canvas.style.height = innerHeight + 'px';
-        ctx.scale(DPR, DPR);
       });
-    })();
+    }, { threshold: 0.2 });
 
-    // IntersectionObserver for fade-up elements
-    (function(){
-      const obs = new IntersectionObserver((entries) => {
-        entries.forEach(ent => {
-          if(ent.isIntersecting) {
-            ent.target.classList.add('in');
-            // optionally unobserve for performance
-            obs.unobserve(ent.target);
-          }
-        });
-      }, { threshold: 0.18 });
-      document.querySelectorAll('[data-anim]').forEach(el => obs.observe(el));
-    })();
+    document.querySelectorAll('.hidden-on-load').forEach(el => observer.observe(el));
+
+    // Demo login mock
+    const USERS = [
+      { email: 'user@example.com', password: 'pass123', customerId: 'CCC-1001', name: 'Asha Patel', meter: 'MTR-908172' },
+      { email: 'raj@smartcity.com', password: 'raj2025', customerId: 'CCC-2077', name: 'Raj Kumar', meter: 'MTR-118291' }
+    ];
+
+    function goToLogin() {
+      document.getElementById('login').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function fillDemo(){
+      document.getElementById('email').value = 'user@example.com';
+      document.getElementById('password').value = 'pass123';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const email = email.value.trim();
+      const password = password.value.trim();
+      const found = USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+      if(!found){
+        document.getElementById('loginError').textContent = 'Invalid credentials';
+        return;
+      }
+      localStorage.setItem('sc_user', JSON.stringify(found));
+      location.href = 'dashboard.html';
+    });
   </script>
 </body>
 </html>
