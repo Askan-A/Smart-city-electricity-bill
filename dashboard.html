@@ -1,122 +1,136 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SmartCity — Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SmartCity Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body,html{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto;}
-    .parallax{position:fixed;inset:0;background-image:url('assets/black-gold.png');background-size:cover;background-position:center top;background-attachment:fixed;z-index:-3}
-    .bg-dim{position:fixed;inset:0;background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.2));z-index:-2;pointer-events:none}
-    #particleCanvas{position:fixed;inset:0;z-index:-1;pointer-events:none;mix-blend-mode:screen}
-    .glass{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px);color:#fff}
-    .container{max-width:980px;margin:4rem auto;padding:1rem}
-    .panel{padding:1.25rem;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04)}
+    :root { --gold: #d4af37; }
+
+    body {
+      background: url('assets/bg.png') center/cover fixed no-repeat;
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .gold-text { color: var(--gold); }
+
+    /* Particle drift */
+    .particles {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: drift 14s linear infinite;
+    }
+    @keyframes drift {
+      from { transform: translateY(100vh) scale(0.8); opacity: 0; }
+      25% { opacity: 0.6; }
+      75% { opacity: 0.8; }
+      to { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    .fade-up {
+      animation: fadeUp 0.8s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
+  <div class="particles" id="particles"></div>
 
-  <div class="parallax" aria-hidden="true"></div>
-  <div class="bg-dim" aria-hidden="true"></div>
-  <canvas id="particleCanvas" aria-hidden="true"></canvas>
-
-  <div class="container">
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-r from-yellow-400 to-amber-500 font-bold text-black">SC</div>
-        <div class="text-white font-semibold text-lg">SmartCity Dashboard</div>
-      </div>
-      <div><button id="logout" class="px-3 py-2 bg-rose-500 text-white rounded">Logout</button></div>
+  <header class="w-full px-6 py-4 flex items-center justify-between text-lg font-semibold bg-black/40 backdrop-blur-sm sticky top-0">
+    <div class="flex items-center gap-3">
+      <img src="https://img.icons8.com/?size=80&id=1484&format=png&color=d4af37" alt="logo" class="w-10 h-10">
+      <span class="text-2xl font-bold gold-text">SmartCity</span>
     </div>
+    <button onclick="logout()" class="text-sm bg-[var(--gold)] text-black px-4 py-2 rounded-lg hover:scale-105 transition">Logout</button>
+  </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-      <div class="panel glass">
-        <h3 class="text-white font-semibold mb-2" id="userName">Welcome</h3>
-        <p class="text-sm text-white/70">Customer ID: <span id="ccc" class="font-mono"></span></p>
-        <p class="text-sm text-white/70">Meter: <span id="meter"></span></p>
-      </div>
+  <main class="relative z-10 flex flex-col items-center justify-center min-h-[90vh] text-center px-6">
+    <div class="glass p-8 rounded-2xl max-w-lg w-full fade-up">
+      <h2 class="text-3xl font-bold gold-text mb-6">Welcome to Your Dashboard</h2>
 
-      <div class="panel glass">
-        <h4 class="text-white font-semibold mb-2">Quick Actions</h4>
-        <div class="flex gap-2">
-          <button class="px-3 py-2 rounded bg-white/8 text-white" id="q50">₹50</button>
-          <button class="px-3 py-2 rounded bg-white/8 text-white" id="q100">₹100</button>
-          <button class="px-3 py-2 rounded bg-gradient-to-r from-yellow-400 to-amber-500 text-black" id="q500">₹500</button>
-        </div>
-      </div>
+      <div id="userInfo" class="text-left space-y-2 mb-6"></div>
+
+      <div class="border-t border-slate-600 my-4"></div>
+
+      <h3 class="text-xl font-semibold gold-text mb-2">Recharge History</h3>
+      <ul id="history" class="text-left text-sm space-y-1 mb-4"></ul>
+
+      <button id="rechargeBtn" class="w-full py-3 bg-[var(--gold)] text-black font-semibold rounded-lg hover:scale-[1.03] transition">Recharge Meter</button>
     </div>
-
-    <div class="panel mb-6">
-      <h4 class="text-white font-semibold mb-3">Recharge Meter</h4>
-      <form id="rechargeForm" class="flex gap-2">
-        <input id="amount" type="number" placeholder="Amount ₹" class="flex-1 p-2 rounded bg-transparent border border-white/6 text-white" />
-        <button class="px-4 py-2 rounded bg-amber-400 font-semibold">Recharge</button>
-      </form>
-      <p id="msg" class="text-sm text-green-300 mt-3"></p>
-    </div>
-
-    <div class="panel">
-      <h4 class="text-white font-semibold mb-3">Transaction History</h4>
-      <div id="txList" class="space-y-2 text-white/80 text-sm"></div>
-    </div>
-  </div>
+  </main>
 
   <script>
-    // particle canvas reuse
-    (function () {
-      const canvas = document.getElementById('particleCanvas');
-      const ctx = canvas.getContext('2d');
-      const DPR = window.devicePixelRatio || 1;
-      function resize(){ canvas.width = innerWidth * DPR; canvas.height = innerHeight * DPR; canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px'; ctx.setTransform(DPR,0,0,DPR,0,0); }
-      resize(); window.addEventListener('resize', resize);
-      const particles = []; const COUNT = 32;
-      function r(min,max){return Math.random()*(max-min)+min;}
-      for(let i=0;i<COUNT;i++) particles.push({x:r(0,innerWidth), y:r(0,innerHeight/2), r:r(0.8,3.6), a:r(0.2,0.9), vx:r(-0.25,0.25), vy:r(0.02,0.16), tw:r(0,Math.PI*2)});
-      function loop(){ ctx.clearRect(0,0,innerWidth,innerHeight); for(const p of particles){ p.x += p.vx*0.6; p.y += p.vy*0.8 + Math.sin(p.tw)*0.02; p.tw += 0.03; if(p.x<-50) p.x=innerWidth+50; if(p.x>innerWidth+50) p.x=-50; if(p.y>innerHeight+60) p.y=-50; const grd = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6); grd.addColorStop(0, 'rgba(255,223,86,'+(p.a*0.9)+')'); grd.addColorStop(0.4, 'rgba(255,200,60,'+(p.a*0.45)+')'); grd.addColorStop(1,'rgba(255,180,40,0)'); ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*6,0,Math.PI*2); ctx.fill(); ctx.fillStyle='rgba(255,245,200,'+p.a+')'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); } requestAnimationFrame(loop); }
-      loop();
-    })();
-
-    // Dashboard logic
-    const user = JSON.parse(localStorage.getItem('sc_user') || 'null');
-    if(!user) location.href = 'meter-login.html';
-    document.getElementById('userName').textContent = 'Welcome, ' + user.name;
-    document.getElementById('ccc').textContent = user.customerId;
-    document.getElementById('meter').textContent = user.meter;
-
-    const KEY = 'sc_transactions';
-    let txs = JSON.parse(localStorage.getItem(KEY) || '[]');
-
-    function render(){
-      const list = document.getElementById('txList');
-      const my = txs.filter(t => t.customerId === user.customerId);
-      if(!my.length){ list.innerHTML = '<div class="text-white/60">No transactions yet.</div>'; return; }
-      list.innerHTML = my.slice().reverse().map(t => `<div class="p-2 rounded bg-white/4 border border-white/6">₹${t.amount} — ${new Date(t.date).toLocaleString()}</div>`).join('');
+    // Background particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 35; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = (Math.random() * 12) + 's';
+      p.style.animationDuration = (10 + Math.random() * 10) + 's';
+      particlesContainer.appendChild(p);
     }
-    render();
 
-    document.getElementById('rechargeForm').addEventListener('submit', e=>{
-      e.preventDefault();
-      const amt = Number(document.getElementById('amount').value);
-      if(!amt){ alert('Enter valid amount'); return; }
-      const tx = { customerId: user.customerId, amount: amt, date: new Date().toISOString(), meter: user.meter, reference: 'REF-'+Math.random().toString(36).slice(2,9).toUpperCase() };
-      txs.push(tx);
-      localStorage.setItem(KEY, JSON.stringify(txs));
-      render();
-      document.getElementById('msg').textContent = 'Recharge successful — ' + tx.reference;
-      document.getElementById('amount').value = '';
-      setTimeout(()=> document.getElementById('msg').textContent='', 4000);
+    // Load user
+    const user = JSON.parse(localStorage.getItem('sc_user'));
+    if (!user) location.href = 'index.html';
+
+    const userInfo = document.getElementById('userInfo');
+    userInfo.innerHTML = `
+      <p><strong>Name:</strong> ${user.name}</p>
+      <p><strong>Email:</strong> ${user.email}</p>
+      <p><strong>Customer ID:</strong> ${user.customerId}</p>
+      <p><strong>Meter Number:</strong> ${user.meter}</p>
+    `;
+
+    // History
+    const history = JSON.parse(localStorage.getItem('sc_recharges') || '[]');
+    const historyList = document.getElementById('history');
+    renderHistory();
+
+    function renderHistory() {
+      historyList.innerHTML = history.length
+        ? history.map(h => `<li>💡 ₹${h.amount} on ${h.date}</li>`).join('')
+        : `<li class="text-slate-400">No recharges yet</li>`;
+    }
+
+    document.getElementById('rechargeBtn').addEventListener('click', () => {
+      const amount = prompt("Enter recharge amount (₹):");
+      if (!amount || isNaN(amount)) return;
+      const newRec = { amount: parseFloat(amount), date: new Date().toLocaleString() };
+      history.push(newRec);
+      localStorage.setItem('sc_recharges', JSON.stringify(history));
+      renderHistory();
+      alert('Recharge successful!');
     });
 
-    document.getElementById('logout').addEventListener('click', ()=>{
+    function logout() {
       localStorage.removeItem('sc_user');
       location.href = 'index.html';
-    });
-
-    // quick buttons
-    document.getElementById('q50').addEventListener('click', ()=> document.getElementById('amount').value = 50);
-    document.getElementById('q100').addEventListener('click', ()=> document.getElementById('amount').value = 100);
-    document.getElementById('q500').addEventListener('click', ()=> document.getElementById('amount').value = 500);
+    }
   </script>
 </body>
 </html>
