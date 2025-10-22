@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India Smart Energy - Home</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+.fade-in { animation: fadeIn 1s ease-in-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+button:hover { transform: scale(1.05); transition: transform 0.2s ease-in-out; }
+</style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 min-h-screen flex flex-col">
+
+<header class="bg-white shadow-lg p-4 fixed w-full top-0 left-0 z-50">
+  <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-indigo-600">⚡ India Smart Energy</h1>
+    <nav class="space-x-4 hidden md:block">
+      <a href="#home" class="text-indigo-600 hover:underline">Home</a>
+      <a href="#login" class="text-indigo-600 hover:underline">Login</a>
+    </nav>
+  </div>
+</header>
+
+<section id="home" class="flex-1 flex flex-col justify-center items-center text-center pt-24 fade-in">
+  <h2 class="text-4xl font-semibold text-indigo-700 mb-4">Pay Your Electricity Bill Easily</h2>
+  <p class="text-gray-700 mb-6 max-w-lg">Welcome to India's most seamless electricity bill payment portal. Login securely, check your balance, view previous transactions, and recharge your meter instantly.</p>
+  <button onclick="scrollToLogin()" class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700">Get Started</button>
+</section>
+
+<section id="login" class="py-16 px-4 flex justify-center fade-in">
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <h3 class="text-2xl font-semibold text-center text-indigo-600 mb-6">Login to Your Account</h3>
+    <form id="loginForm" class="space-y-4">
+      <input type="email" id="email" placeholder="Email" required class="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+      <input type="password" id="password" placeholder="Password" required class="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+      <p id="error" class="text-red-600 text-sm"></p>
+      <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium">Login</button>
+    </form>
+  </div>
+</section>
+
+<footer class="bg-white text-center p-4 text-gray-600 mt-auto">
+  <p>© 2025 India Smart Energy. All rights reserved.</p>
+</footer>
+
+<script>
+const users = [
+  { email: "demo@indiaenergy.com", password: "energy123", name: "Rohit Sharma", ccc: "CCC-4502" },
+  { email: "user@smartcity.com", password: "pass2025", name: "Priya Verma", ccc: "CCC-9081" }
+];
+
+function scrollToLogin() {
+  document.getElementById("login").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("loginForm").onsubmit = function(e) {
+  e.preventDefault();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const user = users.find(u => u.email === email && u.password === password);
+  if (!user) {
+    document.getElementById("error").textContent = "Invalid credentials! Try again.";
+    return;
+  }
+  localStorage.setItem("loggedInUser", JSON.stringify(user));
+  window.location.href = "dashboard.html";
+};
+</script>
+</body>
+</html>
