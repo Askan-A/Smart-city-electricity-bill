@@ -1,91 +1,261 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SmartCity Portal — Pay Bills & More</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartCity Portal — Home</title>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
-    @keyframes float { 0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)} }
-    .float { animation: float 6s ease-in-out infinite; }
-    .service-card { transition: all 0.3s ease; }
-    .service-card:hover {
-      transform: translateY(-6px) scale(1.05);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      background-color: rgba(255,255,255,0.95);
+    /* Base layout */
+    :root { --glass: rgba(255,255,255,0.6); --glass-strong: rgba(255,255,255,0.85); }
+    html,body { height:100%; }
+    body {
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      color:#0f172a;
+      background: #000;
+      overflow-x: hidden;
     }
-    .glass { background: rgba(255,255,255,0.5); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.3); }
+
+    /* Parallax background (fixed) */
+    .parallax {
+      position: fixed;
+      inset: 0;
+      background-image: url('assets/black-gold.png');
+      background-size: cover;
+      background-position: center top;
+      background-attachment: fixed;
+      z-index: -3;
+      transform: translateZ(0);
+    }
+
+    /* dark overlay for readability */
+    .bg-dim {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.25));
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* Canvas particles sit above image but behind content */
+    #particleCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      mix-blend-mode: screen; /* gives glowing on dark bg */
+    }
+
+    /* Glass panels */
+    .glass {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px) saturate(120%);
+      color: #f8fafc;
+    }
+    .card {
+      transition: transform .36s cubic-bezier(.2,.9,.3,1), box-shadow .36s;
+      transform-origin: center;
+      will-change: transform;
+    }
+    .card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+
+    /* service fade-in */
+    .fade-up { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+    .fade-up.in { opacity: 1; transform: translateY(0); }
+
+    /* icons color */
+    .icon-cyan { color: #06b6d4; }
+    .icon-blue { color: #3b82f6; }
+    .icon-rose { color: #fb7185; }
+
+    /* hero */
+    .hero {
+      padding: 6.5rem 1rem 6rem;
+      text-align: center;
+      color: #fff;
+    }
+    .hero h1 { font-size: clamp(1.6rem, 3.6vw, 3rem); font-weight: 800; letter-spacing: -0.02em; }
+    .hero p { margin-top: .75rem; color: rgba(255,255,255,0.85); max-width: 56ch; margin-left: auto; margin-right: auto; }
+
+    /* header */
+    header.site-header { position: sticky; top: 0; z-index: 40; backdrop-filter: blur(6px); background: linear-gradient(90deg, rgba(0,0,0,0.18), rgba(0,0,0,0.08)); padding: 0.7rem 1rem; }
+
+    /* small screen tweaks */
+    @media (max-width: 640px) {
+      .hero { padding-top:4.5rem; padding-bottom:4rem; }
+      .grid-cols-services { grid-template-columns: repeat(1, minmax(0,1fr)); }
+    }
   </style>
 </head>
-<body class="bg-gradient-to-br from-cyan-100 to-blue-100 text-slate-800 font-sans">
+<body>
+
+  <!-- Parallax background + overlay + particle canvas -->
+  <div class="parallax" aria-hidden="true"></div>
+  <div class="bg-dim" aria-hidden="true"></div>
+  <canvas id="particleCanvas" aria-hidden="true"></canvas>
+
   <!-- Header -->
-  <header class="flex justify-between items-center px-6 py-4 bg-white bg-opacity-80 shadow-sm sticky top-0 backdrop-blur">
-    <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">SC</div>
-      <h1 class="text-xl font-bold">SmartCity Portal</h1>
+  <header class="site-header">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r from-yellow-400 via-amber-500 to-rose-400 text-black font-bold">SC</div>
+        <div class="text-white font-semibold">SmartCity Portal</div>
+      </div>
+      <nav>
+        <a href="#services" class="text-white text-sm hover:underline">Services</a>
+      </nav>
     </div>
-    <a href="#services" class="text-cyan-600 hover:text-cyan-800 font-medium">Explore Services ↓</a>
   </header>
 
-  <!-- Hero Section -->
-  <section class="text-center py-24 bg-gradient-to-b from-cyan-200 to-blue-100 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-20">
-      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="bg" cx="50%" cy="50%" r="75%">
-            <stop offset="0%" stop-color="#06b6d4"/>
-            <stop offset="100%" stop-color="#3b82f6"/>
-          </radialGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#bg)"/>
-      </svg>
-    </div>
-    <div class="relative z-10">
-      <h2 class="text-4xl md:text-5xl font-extrabold mb-4 text-slate-800">Welcome to SmartCity</h2>
-      <p class="text-lg text-slate-700 mb-8">Pay bills, recharge meters, and manage utilities — all in one place.</p>
-      <a href="#services" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl shadow-md hover:scale-105 transition-transform">Get Started</a>
-    </div>
-  </section>
-
-  <!-- Services Section -->
-  <section id="services" class="py-20 px-8 bg-gradient-to-b from-blue-100 to-white text-center">
-    <h3 class="text-3xl font-semibold mb-10">Our SmartCity Services</h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-      
-      <!-- Electricity -->
-      <a href="meter-login.html" class="service-card p-8 rounded-2xl glass shadow-md cursor-pointer">
-        <div class="flex justify-center mb-4">
-          <i data-lucide="zap" class="w-10 h-10 text-cyan-600"></i>
+  <!-- HERO -->
+  <main>
+    <section class="hero">
+      <div class="max-w-4xl mx-auto">
+        <h1>SmartCity — Utilities, simplified</h1>
+        <p class="mt-4">Pay electricity, water, mobile recharge and more — fast, secure, and beautiful. Try the interactive service cards below. (Click “Recharge Your Meter” to sign in.)</p>
+        <div class="mt-8">
+          <a href="#services" class="inline-block px-6 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold shadow-lg hover:scale-[1.03] transform transition">Explore services</a>
         </div>
-        <h4 class="text-xl font-semibold mb-2">Recharge Your Meter</h4>
-        <p class="text-sm text-slate-600">Instant electricity top-ups with secure login and real-time tracking.</p>
-      </a>
-
-      <!-- Water Bill -->
-      <div class="service-card p-8 rounded-2xl glass shadow-md cursor-pointer">
-        <div class="flex justify-center mb-4">
-          <i data-lucide="droplets" class="w-10 h-10 text-blue-500"></i>
-        </div>
-        <h4 class="text-xl font-semibold mb-2">Pay Water Bill</h4>
-        <p class="text-sm text-slate-600">Quick water bill payments with reminders and receipts.</p>
       </div>
+    </section>
 
-      <!-- Mobile Recharge -->
-      <div class="service-card p-8 rounded-2xl glass shadow-md cursor-pointer">
-        <div class="flex justify-center mb-4">
-          <i data-lucide="smartphone" class="w-10 h-10 text-rose-500"></i>
+    <!-- SERVICES -->
+    <section id="services" class="py-16">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-2xl font-bold text-white mb-6 text-center">Our Services</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <!-- Electricity (interactive link) -->
+          <a href="meter-login.html" class="fade-up card p-6 rounded-2xl glass" data-anim>
+            <div class="flex items-center justify-center mb-3">
+              <i data-lucide="zap" class="w-10 h-10 icon-cyan"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-1">Recharge Your Meter</h3>
+            <p class="text-sm opacity-80">Login, top-up and view transaction history.</p>
+          </a>
+
+          <!-- Water (simulated) -->
+          <div class="fade-up card p-6 rounded-2xl glass" data-anim onclick="alert('This is a demo card — mobile & water are simulated.')">
+            <div class="flex items-center justify-center mb-3">
+              <i data-lucide="droplets" class="w-10 h-10 icon-blue"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-1">Pay Water Bill</h3>
+            <p class="text-sm opacity-80">Simulated payment flow and receipts.</p>
+          </div>
+
+          <!-- Mobile -->
+          <div class="fade-up card p-6 rounded-2xl glass" data-anim onclick="alert('Mobile recharge demo — integrate gateway for live payments.')">
+            <div class="flex items-center justify-center mb-3">
+              <i data-lucide="smartphone" class="w-10 h-10 icon-rose"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-1">Mobile Recharge</h3>
+            <p class="text-sm opacity-80">Recharge phone plans quickly (demo).</p>
+          </div>
         </div>
-        <h4 class="text-xl font-semibold mb-2">Mobile Recharge</h4>
-        <p class="text-sm text-slate-600">Recharge your prepaid mobile quickly and securely.</p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer class="py-6 text-center text-slate-500 text-sm">
-    © 2025 SmartCity Portal. All rights reserved.
-  </footer>
+    <footer class="py-8 text-center text-white/80">
+      © 2025 SmartCity Portal
+    </footer>
+  </main>
 
+  <!-- Lucide icons -->
   <script> lucide.createIcons(); </script>
+
+  <!-- Small JS: particles + scroll fade-in -->
+  <script>
+    // Particles canvas (subtle gold twinkle/drift)
+    (function () {
+      const canvas = document.getElementById('particleCanvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = innerWidth;
+      let h = canvas.height = innerHeight;
+      const DPR = window.devicePixelRatio || 1;
+      canvas.width = innerWidth * DPR;
+      canvas.height = innerHeight * DPR;
+      canvas.style.width = innerWidth + 'px';
+      canvas.style.height = innerHeight + 'px';
+      ctx.scale(DPR, DPR);
+
+      const particles = [];
+      const PARTICLE_COUNT = Math.max(24, Math.floor((w*h)/200000)); // responsive count
+
+      function rand(min, max){ return Math.random()*(max-min)+min; }
+
+      for(let i=0;i<PARTICLE_COUNT;i++){
+        particles.push({
+          x: rand(0, w),
+          y: rand(0, h/2), // heavier at top
+          r: rand(0.8, 3.6),
+          a: rand(0.2, 0.95),
+          vx: rand(-0.02, 0.6)* (Math.random()<0.5 ? -1 : 1),
+          vy: rand(0.02, 0.15),
+          twinkle: Math.random()*Math.PI*2
+        });
+      }
+
+      function draw(){
+        ctx.clearRect(0,0,innerWidth,innerHeight);
+        for(const p of particles){
+          p.x += p.vx * 0.6;
+          p.y += p.vy * 0.8 + Math.sin(p.twinkle)*0.02;
+          p.twinkle += 0.02;
+
+          if(p.x < -50) p.x = innerWidth+50;
+          if(p.x > innerWidth+50) p.x = -50;
+          if(p.y > innerHeight+50) p.y = -50;
+
+          // glow
+          const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r*6);
+          grd.addColorStop(0, 'rgba(255,223,86,' + (p.a*0.9) + ')');
+          grd.addColorStop(0.35, 'rgba(255,200,60,' + (p.a*0.45) + ')');
+          grd.addColorStop(1, 'rgba(255,180,40,0)');
+          ctx.fillStyle = grd;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r*6, 0, Math.PI*2);
+          ctx.fill();
+
+          // small center
+          ctx.fillStyle = 'rgba(255,245,200,' + p.a + ')';
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fill();
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+
+      // handle resize
+      window.addEventListener('resize', ()=>{
+        const DPR = window.devicePixelRatio || 1;
+        canvas.width = innerWidth * DPR;
+        canvas.height = innerHeight * DPR;
+        canvas.style.width = innerWidth + 'px';
+        canvas.style.height = innerHeight + 'px';
+        ctx.scale(DPR, DPR);
+      });
+    })();
+
+    // IntersectionObserver for fade-up elements
+    (function(){
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(ent => {
+          if(ent.isIntersecting) {
+            ent.target.classList.add('in');
+            // optionally unobserve for performance
+            obs.unobserve(ent.target);
+          }
+        });
+      }, { threshold: 0.18 });
+      document.querySelectorAll('[data-anim]').forEach(el => obs.observe(el));
+    })();
+  </script>
 </body>
 </html>
