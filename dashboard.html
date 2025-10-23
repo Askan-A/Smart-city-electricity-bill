@@ -1,34 +1,136 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartCity — Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SmartCity Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background: url('assets/bg.png') no-repeat center center fixed; background-size: cover; }
+    :root { --gold: #d4af37; }
+
+    body {
+      background: url('assets/bg.png') center/cover fixed no-repeat;
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .gold-text { color: var(--gold); }
+
+    /* Particle drift */
+    .particles {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: drift 14s linear infinite;
+    }
+    @keyframes drift {
+      from { transform: translateY(100vh) scale(0.8); opacity: 0; }
+      25% { opacity: 0.6; }
+      75% { opacity: 0.8; }
+      to { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    .fade-up {
+      animation: fadeUp 0.8s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
-<body class="bg-black/70 text-white min-h-screen backdrop-blur-sm">
-  <div class="max-w-5xl mx-auto p-6">
-    <header class="flex justify-between items-center mb-8">
-      <h1 class="text-2xl font-bold text-yellow-400">⚡ SmartCity Dashboard</h1>
-      <button onclick="logout()" class="text-sm px-3 py-2 bg-yellow-500 text-black rounded-lg">Logout</button>
-    </header>
-    <div id="userInfo" class="mb-8"></div>
-    <div id="transactions" class="space-y-4"></div>
-  </div>
+<body>
+  <div class="particles" id="particles"></div>
+
+  <header class="w-full px-6 py-4 flex items-center justify-between text-lg font-semibold bg-black/40 backdrop-blur-sm sticky top-0">
+    <div class="flex items-center gap-3">
+      <img src="https://img.icons8.com/?size=80&id=1484&format=png&color=d4af37" alt="logo" class="w-10 h-10">
+      <span class="text-2xl font-bold gold-text">SmartCity</span>
+    </div>
+    <button onclick="logout()" class="text-sm bg-[var(--gold)] text-black px-4 py-2 rounded-lg hover:scale-105 transition">Logout</button>
+  </header>
+
+  <main class="relative z-10 flex flex-col items-center justify-center min-h-[90vh] text-center px-6">
+    <div class="glass p-8 rounded-2xl max-w-lg w-full fade-up">
+      <h2 class="text-3xl font-bold gold-text mb-6">Welcome to Your Dashboard</h2>
+
+      <div id="userInfo" class="text-left space-y-2 mb-6"></div>
+
+      <div class="border-t border-slate-600 my-4"></div>
+
+      <h3 class="text-xl font-semibold gold-text mb-2">Recharge History</h3>
+      <ul id="history" class="text-left text-sm space-y-1 mb-4"></ul>
+
+      <button id="rechargeBtn" class="w-full py-3 bg-[var(--gold)] text-black font-semibold rounded-lg hover:scale-[1.03] transition">Recharge Meter</button>
+    </div>
+  </main>
+
   <script>
-    const user = JSON.parse(localStorage.getItem('sc_user') || 'null');
-    if(!user) location.href = 'meter-login.html';
-    else {
-      document.getElementById('userInfo').innerHTML = `
-        <p><strong>Name:</strong> ${user.name}</p>
-        <p><strong>Customer ID:</strong> ${user.customerId}</p>
-        <p class="mt-4 text-yellow-400">Welcome back, ${user.name}! Your last recharge was ₹1,200.</p>
-      `;
+    // Background particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 35; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = (Math.random() * 12) + 's';
+      p.style.animationDuration = (10 + Math.random() * 10) + 's';
+      particlesContainer.appendChild(p);
     }
-    function logout(){ localStorage.removeItem('sc_user'); location.href='index.html'; }
+
+    // Load user
+    const user = JSON.parse(localStorage.getItem('sc_user'));
+    if (!user) location.href = 'index.html';
+
+    const userInfo = document.getElementById('userInfo');
+    userInfo.innerHTML = `
+      <p><strong>Name:</strong> ${user.name}</p>
+      <p><strong>Email:</strong> ${user.email}</p>
+      <p><strong>Customer ID:</strong> ${user.customerId}</p>
+      <p><strong>Meter Number:</strong> ${user.meter}</p>
+    `;
+
+    // History
+    const history = JSON.parse(localStorage.getItem('sc_recharges') || '[]');
+    const historyList = document.getElementById('history');
+    renderHistory();
+
+    function renderHistory() {
+      historyList.innerHTML = history.length
+        ? history.map(h => `<li>💡 ₹${h.amount} on ${h.date}</li>`).join('')
+        : `<li class="text-slate-400">No recharges yet</li>`;
+    }
+
+    document.getElementById('rechargeBtn').addEventListener('click', () => {
+      const amount = prompt("Enter recharge amount (₹):");
+      if (!amount || isNaN(amount)) return;
+      const newRec = { amount: parseFloat(amount), date: new Date().toLocaleString() };
+      history.push(newRec);
+      localStorage.setItem('sc_recharges', JSON.stringify(history));
+      renderHistory();
+      alert('Recharge successful!');
+    });
+
+    function logout() {
+      localStorage.removeItem('sc_user');
+      location.href = 'index.html';
+    }
   </script>
 </body>
 </html>
