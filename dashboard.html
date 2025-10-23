@@ -1,42 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartCity — Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { background: url('assets/bg.png') no-repeat center center fixed; background-size: cover; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartCity Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#000;color:white;font-family:'Inter',sans-serif;}
+canvas#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+.glass{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(8px);}
+</style>
 </head>
-<body class="bg-black/70 text-white min-h-screen backdrop-blur-sm">
-  <div class="max-w-5xl mx-auto p-6">
-    <header class="flex justify-between items-center mb-8">
-      <h1 class="text-2xl font-bold text-yellow-400">⚡ SmartCity Dashboard</h1>
-      <button onclick="logout()" class="text-sm px-3 py-2 bg-yellow-500 text-black rounded-lg">Logout</button>
-    </header>
-    <div id="userInfo" class="mb-8"></div>
-  </div>
+<body>
+<canvas id="particles"></canvas>
 
-  <script>
-    function logout() {
-      localStorage.removeItem('sc_user');
-      window.location.href = 'index.html';
-    }
+<div class="max-w-5xl mx-auto p-6">
+  <header class="flex justify-between items-center mb-8">
+    <h1 class="text-2xl font-bold text-yellow-400">SmartCity Dashboard</h1>
+    <button id="logout" class="text-sm text-yellow-400 underline">Logout</button>
+  </header>
 
-    window.addEventListener('load', () => {
-      const user = JSON.parse(localStorage.getItem('sc_user') || 'null');
-      if (!user) {
-        window.location.href = 'meter-login.html';
-        return;
-      }
-      document.getElementById('userInfo').innerHTML = `
-        <p><strong>Name:</strong> ${user.name}</p>
-        <p><strong>Customer ID:</strong> ${user.customerId}</p>
-        <p class="mt-4 text-yellow-400">Welcome, ${user.name}! You can recharge your meter below.</p>
-        <button onclick="alert('Recharge successful!')" class="mt-4 bg-yellow-500 text-black px-6 py-2 rounded-lg hover:bg-yellow-400 transition-all">💳 Recharge Meter</button>
-      `;
-    });
-  </script>
+  <section class="glass p-6 rounded-2xl mb-8">
+    <h2 class="text-xl font-semibold text-yellow-400 mb-2" id="userName"></h2>
+    <p>Customer ID: <span id="ccc"></span></p>
+    <p>Meter No: <span id="meter"></span></p>
+  </section>
+
+  <section class="glass p-6 rounded-2xl mb-8">
+    <h3 class="text-lg font-semibold text-yellow-400 mb-3">Recharge Meter</h3>
+    <form id="rechargeForm" class="flex flex-col sm:flex-row gap-3">
+      <input id="amount" type="number" min="1" placeholder="Enter Amount ₹" required class="px-4 py-2 rounded-lg text-black">
+      <button type="submit" class="bg-yellow-500 text-black px-6 py-2 rounded-lg font-semibold">Recharge</button>
+    </form>
+    <div id="msg" class="mt-3 text-sm"></div>
+  </section>
+
+  <section class="glass p-6 rounded-2xl">
+    <h3 class="text-lg font-semibold text-yellow-400 mb-3">Previous Transactions</h3>
+    <div id="transactions" class="space-y-3 text-sm"></div>
+  </section>
+</div>
+
+<script>
+const s=localStorage.getItem('sc_user');
+if(!s)location.href='meter-login.html';
+const u=JSON.parse(s);
+document.getElementById('userName').textContent=u.name;
+document.getElementById('ccc').textContent=u.customerId;
+document.getElementById('meter').textContent=u.meter;
+
+const key='tx_'+u.customerId;
+let tx=JSON.parse(localStorage.getItem(key)||'[]');
+const list=document.getElementById('transactions');
+function render(){
+  if(tx.length===0){list.innerHTML='<p class="text-slate-400">No transactions yet.</p>';return;}
+  list.innerHTML=tx.slice().reverse().map(t=>`<div class='p-3 rounded-lg bg-black/40 border border-yellow-500/20'>
+    <div class='flex justify-between'><span>₹${t.amount}</span><span>${new Date(t.date).toLocaleString()}</span></div>
+    <div class='text-xs text-slate-400'>Ref: ${t.ref}</div>
+  </div>`).join('');
+}
+render();
+
+document.getElementById('rechargeForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const val=Number(document.getElementById('amount').value);
+  if(!val||val<=0)return;
+  const entry={amount:val,date:new Date().toISOString(),ref:'REF-'+Math.random().toString(36).slice(2,9).toUpperCase()};
+  tx.push(entry);
+  localStorage.setItem(key,JSON.stringify(tx));
+  render();
+  const m=document.getElementById('msg');
+  m.textContent=`Successfully recharged ₹${val}`;
+  m.style.color='lightgreen';
+  setTimeout(()=>m.textContent='',3000);
+});
+document.getElementById('logout').onclick=()=>{localStorage.removeItem('sc_user');location.href='meter-login.html';};
+
+// particles
+const c=document.getElementById('particles'),ctx=c.getContext('2d');let w,h,p=[];
+function resize(){w=innerWidth;h=innerHeight;c.width=w;c.height=h;}
+window.addEventListener('resize',resize);resize();
+for(let i=0;i<150;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3});
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  for(let a of p){
+    ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,2*Math.PI);
+    ctx.fillStyle='rgba(255,215,0,0.9)';ctx.fill();
+    a.x+=a.dx;a.y+=a.dy;if(a.x<0||a.x>w)a.dx*=-1;if(a.y<0||a.y>h)a.dy*=-1;
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
 </body>
 </html>
