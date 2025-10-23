@@ -6,32 +6,26 @@
 <title>SmartCity — Home</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  html,body {margin:0;padding:0;overflow-x:hidden;}
   body {
     background: radial-gradient(circle at center, #0a0a0a 40%, #000 100%);
-    color: white;
+    color: white; margin: 0; overflow-x: hidden;
     font-family: 'Inter', sans-serif;
   }
   canvas#particles {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: -1;
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; z-index: -1;
   }
   .glass {
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.15);
-    backdrop-filter: blur(8px);
-    border-radius: 16px;
+    backdrop-filter: blur(8px); border-radius: 16px;
   }
-  .fade-up {opacity:0; transform:translateY(30px); transition:all 0.8s ease;}
-  .fade-up.show {opacity:1; transform:translateY(0);}
-  .card:hover {transform:scale(1.03); box-shadow:0 0 30px rgba(255,215,0,0.15);}
-  .card:active {transform:scale(0.98);}
+  .fade-up {opacity: 0; transform: translateY(30px); transition: all 0.8s ease;}
+  .fade-up.show {opacity: 1; transform: translateY(0);}
+  .card:hover {transform: scale(1.03); box-shadow: 0 0 30px rgba(255,215,0,0.15);}
 </style>
 </head>
 <body>
-
 <canvas id="particles"></canvas>
 
 <header class="text-center py-12">
@@ -42,21 +36,21 @@
 <main class="flex flex-col items-center space-y-24">
   <section class="text-center w-full max-w-3xl fade-up">
     <h2 class="text-2xl font-semibold mb-4">Our Services</h2>
-    <p class="text-slate-400 mb-10">Scroll down and explore interactive services.</p>
+    <p class="text-slate-400 mb-10">Scroll down and explore interactive options.</p>
   </section>
 
   <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl px-6 fade-up">
     <div class="card glass p-8 text-center cursor-pointer transition" onclick="window.location='meter-login.html'">
       <h3 class="text-xl font-semibold text-yellow-400 mb-2">Recharge Your Meter</h3>
-      <p class="text-slate-300 text-sm">Recharge electricity in seconds. Track usage, manage bills.</p>
+      <p class="text-slate-300 text-sm">Recharge electricity instantly and track your bills.</p>
     </div>
     <div class="card glass p-8 text-center cursor-pointer transition">
       <h3 class="text-xl font-semibold text-yellow-400 mb-2">Pay Water Bill</h3>
-      <p class="text-slate-300 text-sm">Coming soon: Manage your SmartCity water account easily.</p>
+      <p class="text-slate-300 text-sm">Manage your SmartCity water bill easily.</p>
     </div>
     <div class="card glass p-8 text-center cursor-pointer transition">
       <h3 class="text-xl font-semibold text-yellow-400 mb-2">Mobile Recharge</h3>
-      <p class="text-slate-300 text-sm">Top up prepaid numbers instantly with SmartCity convenience.</p>
+      <p class="text-slate-300 text-sm">Top up prepaid numbers instantly.</p>
     </div>
   </section>
 </main>
@@ -67,36 +61,22 @@
 </footer>
 
 <script>
-// particle background
-const c = document.getElementById('particles');
-const ctx = c.getContext('2d');
-let w, h, particles=[];
-function resize(){w=window.innerWidth;h=window.innerHeight;c.width=w;c.height=h;}
-window.addEventListener('resize', resize);resize();
-for(let i=0;i<120;i++){
-  particles.push({x:Math.random()*w,y:Math.random()*h, r:Math.random()*2+0.5, dx:(Math.random()-0.5)*0.3, dy:(Math.random()-0.5)*0.3});
-}
+const c=document.getElementById('particles'),ctx=c.getContext('2d');let w,h,p=[];
+function resize(){w=innerWidth;h=innerHeight;c.width=w;c.height=h;}
+window.addEventListener('resize',resize);resize();
+for(let i=0;i<150;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3});
 function draw(){
   ctx.clearRect(0,0,w,h);
-  for(let p of particles){
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
-    ctx.fillStyle='rgba(255,215,0,0.8)';
-    ctx.fill();
-    p.x+=p.dx; p.y+=p.dy;
-    if(p.x<0||p.x>w)p.dx*=-1;
-    if(p.y<0||p.y>h)p.dy*=-1;
+  for(let a of p){
+    ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,2*Math.PI);
+    ctx.fillStyle='rgba(255,215,0,0.8)';ctx.fill();
+    a.x+=a.dx;a.y+=a.dy;if(a.x<0||a.x>w)a.dx*=-1;if(a.y<0||a.y>h)a.dy*=-1;
   }
   requestAnimationFrame(draw);
 }
 draw();
-
-// scroll reveal
-const items=document.querySelectorAll('.fade-up');
-const obs=new IntersectionObserver(e=>{
-  e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('show');});
-},{threshold:0.2});
-items.forEach(i=>obs.observe(i));
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('show');});},{threshold:0.2});
+document.querySelectorAll('.fade-up').forEach(i=>obs.observe(i));
 </script>
 </body>
 </html>
