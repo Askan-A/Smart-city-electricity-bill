@@ -1,62 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartCity — Login</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      background: url('assets/bg.png') no-repeat center center fixed;
-      background-size: cover;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartCity — Login</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#000;color:white;font-family:'Inter',sans-serif;overflow:hidden;}
+canvas#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+.glass{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(8px);}
+input{background:rgba(255,255,255,0.1);border:none;padding:0.75rem 1rem;width:100%;color:white;border-radius:8px;}
+button{background:linear-gradient(to right,#facc15,#fbbf24);color:black;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;}
+button:hover{transform:scale(1.03);}
+</style>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-black/60 text-white backdrop-blur-sm">
-  <div class="bg-white/10 p-8 rounded-2xl shadow-lg max-w-md w-full">
-    <h2 class="text-2xl font-semibold mb-6 text-center text-yellow-400">Login to SmartCity</h2>
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block text-sm mb-1">Email</label>
-        <input id="email" type="email" class="w-full px-4 py-2 rounded-lg text-black" required>
-      </div>
-      <div>
-        <label class="block text-sm mb-1">Password</label>
-        <input id="password" type="password" class="w-full px-4 py-2 rounded-lg text-black" required>
-      </div>
-      <p id="error" class="text-red-500 text-sm min-h-[1.2em]"></p>
-      <button type="submit" class="w-full bg-yellow-500 text-black font-semibold py-2 rounded-lg hover:bg-yellow-400">Login</button>
-      <button type="button" id="demoBtn" class="mt-3 w-full text-sm text-yellow-400 underline">Use Demo Credentials</button>
-    </form>
-  </div>
+<body>
+<canvas id="particles"></canvas>
 
-  <script>
-    const users = [
-      { email: 'user@example.com', password: 'pass123', name: 'Asha Patel', customerId: 'CCC-1001' },
-      { email: 'raj@smartcity.com', password: 'raj2025', name: 'Raj Kumar', customerId: 'CCC-2077' }
-    ];
+<div class="min-h-screen flex items-center justify-center">
+  <form id="loginForm" class="glass p-10 rounded-2xl w-full max-w-md space-y-6 text-center">
+    <h1 class="text-2xl font-bold text-yellow-400">SmartCity Login</h1>
+    <input id="email" type="email" placeholder="Email" required>
+    <input id="password" type="password" placeholder="Password" required>
+    <div id="error" class="text-red-500 text-sm min-h-[1.2em]"></div>
+    <button type="submit" class="w-full">Sign In</button>
+    <button type="button" onclick="fillDemo()" class="mt-3 text-sm underline text-yellow-400">Auto-fill Demo</button>
+  </form>
+</div>
 
-    const form = document.getElementById('loginForm');
-    const error = document.getElementById('error');
-    const demoBtn = document.getElementById('demoBtn');
+<script>
+const USERS=[
+  {email:'user@example.com',password:'pass123',customerId:'CCC-1001',name:'Asha Patel',meter:'MTR-908172'},
+  {email:'raj@smartcity.com',password:'raj2025',customerId:'CCC-2077',name:'Raj Kumar',meter:'MTR-118291'}
+];
+document.getElementById('loginForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const em=document.getElementById('email').value.trim().toLowerCase();
+  const pw=document.getElementById('password').value;
+  const err=document.getElementById('error');
+  const found=USERS.find(u=>u.email===em&&u.password===pw);
+  if(!found){err.textContent='Invalid credentials.';return;}
+  localStorage.setItem('sc_user',JSON.stringify(found));
+  location.href='dashboard.html';
+});
+function fillDemo(){
+  document.getElementById('email').value='user@example.com';
+  document.getElementById('password').value='pass123';
+}
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const user = users.find(u => u.email === email && u.password === password);
-      if (!user) {
-        error.textContent = 'Invalid email or password.';
-        return;
-      }
-      localStorage.setItem('sc_user', JSON.stringify(user));
-      window.location.href = 'dashboard.html';
-    });
-
-    demoBtn.addEventListener('click', () => {
-      document.getElementById('email').value = 'user@example.com';
-      document.getElementById('password').value = 'pass123';
-    });
-  </script>
+// particles
+const c=document.getElementById('particles'),ctx=c.getContext('2d');let w,h,p=[];
+function resize(){w=innerWidth;h=innerHeight;c.width=w;c.height=h;}
+window.addEventListener('resize',resize);resize();
+for(let i=0;i<100;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3});
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  for(let a of p){
+    ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,2*Math.PI);
+    ctx.fillStyle='rgba(255,215,0,0.8)';ctx.fill();
+    a.x+=a.dx;a.y+=a.dy;if(a.x<0||a.x>w)a.dx*=-1;if(a.y<0||a.y>h)a.dy*=-1;
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
 </body>
 </html>
