@@ -1,135 +1,58 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SmartCity — Meter Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartCity — Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
-    body,html { height:100%; margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto; background:#000; }
-    .parallax { position: fixed; inset:0; background-image: url('assets/black-gold.png'); background-size: cover; background-position: center top; background-attachment: fixed; z-index:-3; }
-    .bg-dim { position: fixed; inset:0; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.3)); z-index:-2; pointer-events:none; }
-    #particleCanvas{position:fixed; inset:0; z-index:-1; pointer-events:none; mix-blend-mode: screen;}
-    .glass { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); backdrop-filter: blur(8px); color:#fff; }
-    .card { max-width: 1100px; margin: 4rem auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding: 2.5rem; border-radius: 14px; }
-    @media (max-width: 860px) { .card { grid-template-columns: 1fr; padding:1.5rem; } }
-    .btn-fill { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); padding:.6rem 1rem; border-radius:8px; color:#fff; }
+    body {
+      background: url('assets/bg.png') no-repeat center center fixed;
+      background-size: cover;
+    }
   </style>
 </head>
-<body>
-
-  <div class="parallax" aria-hidden="true"></div>
-  <div class="bg-dim" aria-hidden="true"></div>
-  <canvas id="particleCanvas" aria-hidden="true"></canvas>
-
-  <div class="glass card mx-4">
-    <div>
-      <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-r from-yellow-400 to-amber-500 font-bold text-black">SC</div>
-        <div>
-          <h2 class="text-2xl font-bold text-white">SmartCity — Electricity</h2>
-          <p class="text-sm text-white/80">Login to recharge your meter and view history</p>
-        </div>
+<body class="min-h-screen flex items-center justify-center bg-black/60 text-white backdrop-blur-sm">
+  <div class="bg-white/10 p-8 rounded-2xl shadow-lg max-w-md w-full">
+    <h2 class="text-2xl font-semibold mb-6 text-center text-yellow-400">Login to SmartCity</h2>
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-sm mb-1">Email</label>
+        <input id="email" type="email" class="w-full px-4 py-2 rounded-lg text-black" required>
       </div>
-
-      <p class="text-white/70">Demo accounts: <strong>user@example.com / pass123</strong> and <strong>raj@smartcity.com / raj2025</strong></p>
-      <ul class="mt-4 text-white/70 space-y-2 text-sm">
-        <li>• Fast top-ups</li>
-        <li>• Transactions stored locally (demo)</li>
-      </ul>
-    </div>
-
-    <div>
-      <form id="loginForm" class="space-y-4">
-        <div>
-          <label class="text-xs text-white/80">Email</label>
-          <input id="email" type="email" required class="w-full mt-1 px-4 py-3 rounded-lg bg-transparent border border-white/10 text-white placeholder-white/60" placeholder="you@example.com">
-        </div>
-        <div>
-          <label class="text-xs text-white/80">Password</label>
-          <input id="password" type="password" required class="w-full mt-1 px-4 py-3 rounded-lg bg-transparent border border-white/10 text-white placeholder-white/60" placeholder="••••••••">
-        </div>
-
-        <div id="loginError" class="text-sm text-rose-300 min-h-[1.2em]"></div>
-
-        <div class="flex gap-3">
-          <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-400 to-amber-500 text-black py-3 rounded-lg font-semibold">Sign in</button>
-          <button type="button" onclick="fillDemo()" class="btn-fill">Autofill</button>
-        </div>
-
-        <div class="text-center text-xs text-white/60">This demo uses localStorage. For production use secure APIs & payment gateways.</div>
-      </form>
-    </div>
+      <div>
+        <label class="block text-sm mb-1">Password</label>
+        <input id="password" type="password" class="w-full px-4 py-2 rounded-lg text-black" required>
+      </div>
+      <p id="error" class="text-red-500 text-sm min-h-[1.2em]"></p>
+      <button type="submit" class="w-full bg-yellow-500 text-black font-semibold py-2 rounded-lg hover:bg-yellow-400">Login</button>
+    </form>
   </div>
 
-  <script> lucide.createIcons(); </script>
-
   <script>
-    // particle canvas — same logic as index (self-contained)
-    (function () {
-      const canvas = document.getElementById('particleCanvas');
-      const ctx = canvas.getContext('2d');
-      const DPR = window.devicePixelRatio || 1;
-      function resize(){ canvas.width = innerWidth * DPR; canvas.height = innerHeight * DPR; canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px'; ctx.setTransform(DPR,0,0,DPR,0,0); }
-      resize();
-      window.addEventListener('resize', resize);
-
-      const particles = [];
-      const COUNT = 28;
-      function r(min,max){ return Math.random()*(max-min)+min; }
-      for(let i=0;i<COUNT;i++) particles.push({ x:r(0,innerWidth), y:r(0,innerHeight/2), r:r(0.7,3.4), a:r(0.2,0.9), vx:r(-0.25,0.25), vy:r(0.02,0.12), tw:r(0,Math.PI*2) });
-
-      function loop(){
-        ctx.clearRect(0,0,innerWidth,innerHeight);
-        for(const p of particles){
-          p.x += p.vx * 0.6;
-          p.y += p.vy * 0.8 + Math.sin(p.tw) * 0.02;
-          p.tw += 0.03;
-          if(p.x < -50) p.x = innerWidth+50;
-          if(p.x > innerWidth+50) p.x = -50;
-          if(p.y > innerHeight+60) p.y = -50;
-          const grd = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
-          grd.addColorStop(0, 'rgba(255,223,86,'+(p.a*0.9)+')');
-          grd.addColorStop(0.4, 'rgba(255,200,60,'+(p.a*0.45)+')');
-          grd.addColorStop(1, 'rgba(255,180,40,0)');
-          ctx.fillStyle = grd;
-          ctx.beginPath(); ctx.arc(p.x,p.y,p.r*6,0,Math.PI*2); ctx.fill();
-          ctx.fillStyle = 'rgba(255,245,200,'+p.a+')'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-        }
-        requestAnimationFrame(loop);
-      }
-      loop();
-    })();
-
-    // Users & login logic
-    const USERS = [
-      { email: 'user@example.com', password: 'pass123', customerId: 'CCC-1001', name: 'Asha Patel', meter: 'MTR-908172' },
-      { email: 'raj@smartcity.com', password: 'raj2025', customerId: 'CCC-2077', name: 'Raj Kumar', meter: 'MTR-118291' }
+    const users = [
+      { email: 'user@example.com', password: 'pass123', name: 'Asha Patel', customerId: 'CCC-1001' },
+      { email: 'raj@smartcity.com', password: 'raj2025', name: 'Raj Kumar', customerId: 'CCC-2077' }
     ];
 
-    const form = document.getElementById('loginForm');
-    const emailEl = document.getElementById('email');
-    const passwordEl = document.getElementById('password');
-    const err = document.getElementById('loginError');
-
-    form.addEventListener('submit', (e)=>{
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      err.textContent = '';
-      const em = emailEl.value.trim(), pw = passwordEl.value;
-      const found = USERS.find(u => u.email.toLowerCase() === em.toLowerCase() && u.password === pw);
-      if(!found){ err.textContent = 'Invalid credentials'; return; }
-      localStorage.setItem('sc_user', JSON.stringify(found));
-      window.location.href = 'dashboard.html';
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const user = users.find(u => u.email === email && u.password === password);
+      if (!user) {
+        document.getElementById('error').textContent = 'Invalid email or password.';
+        return;
+      }
+      localStorage.setItem('sc_user', JSON.stringify(user));
+      location.href = 'dashboard.html';
     });
 
-    function fillDemo(){
-      emailEl.value = 'user@example.com';
-      passwordEl.value = 'pass123';
+    if (localStorage.getItem('autoFillDemo')) {
+      document.getElementById('email').value = 'user@example.com';
+      document.getElementById('password').value = 'pass123';
+      localStorage.removeItem('autoFillDemo');
     }
-
-    (function(){ if(localStorage.getItem('sc_user')) window.location.href = 'dashboard.html'; })();
   </script>
 </body>
 </html>
