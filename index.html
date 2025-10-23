@@ -8,35 +8,94 @@
 <style>
   body {
     background: radial-gradient(circle at center, #0a0a0a 40%, #000 100%);
-    color: white; margin: 0; overflow-x: hidden;
+    color: white;
+    margin: 0;
+    overflow-x: hidden;
     font-family: 'Inter', sans-serif;
   }
   canvas#particles {
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%; z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+  }
+  .hero-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 110%;
+    height: 110%;
+    background: url('assets/bg.png') center/cover no-repeat;
+    filter: brightness(0.35);
+    z-index: -3;
+    transform: scale(1);
+    animation: zoom 40s ease-in-out infinite alternate;
+  }
+  @keyframes zoom {
+    0% { transform: scale(1); filter: brightness(0.35); }
+    100% { transform: scale(1.1); filter: brightness(0.45); }
   }
   .glass {
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.15);
-    backdrop-filter: blur(8px); border-radius: 16px;
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
   }
-  .fade-up {opacity: 0; transform: translateY(30px); transition: all 0.8s ease;}
-  .fade-up.show {opacity: 1; transform: translateY(0);}
-  .card:hover {transform: scale(1.03); box-shadow: 0 0 30px rgba(255,215,0,0.15);}
+  .fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.9s ease;
+  }
+  .fade-up.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 30px rgba(255,215,0,0.15);
+  }
+  section.fullscreen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+  }
+  .scroll-down {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #facc15;
+    font-size: 0.9rem;
+    animation: bounce 1.5s infinite;
+  }
+  @keyframes bounce {
+    0%,100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, -10px); }
+  }
 </style>
 </head>
 <body>
+<div class="hero-bg"></div>
 <canvas id="particles"></canvas>
 
-<header class="text-center py-12">
-  <h1 class="text-4xl font-bold text-yellow-400 tracking-wide">⚡ SmartCity Electricity Portal ⚡</h1>
-  <p class="text-slate-300 mt-3">Power your home — modern, secure, elegant.</p>
-</header>
+<!-- Fullscreen Hero -->
+<section class="fullscreen relative">
+  <h1 class="text-5xl font-bold text-yellow-400 tracking-wide mb-3 animate-fadeIn">⚡ SmartCity Electricity Portal ⚡</h1>
+  <p class="text-slate-300 text-lg">Powering your city with elegance and innovation.</p>
+  <div class="scroll-down">▼ Scroll Down ▼</div>
+</section>
 
-<main class="flex flex-col items-center space-y-24">
+<!-- Options Section -->
+<main class="flex flex-col items-center space-y-24 pt-20 pb-20">
   <section class="text-center w-full max-w-3xl fade-up">
     <h2 class="text-2xl font-semibold mb-4">Our Services</h2>
-    <p class="text-slate-400 mb-10">Scroll down and explore interactive options.</p>
+    <p class="text-slate-400 mb-10">Discover SmartCity’s interactive utilities below.</p>
   </section>
 
   <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl px-6 fade-up">
@@ -61,21 +120,29 @@
 </footer>
 
 <script>
-const c=document.getElementById('particles'),ctx=c.getContext('2d');let w,h,p=[];
-function resize(){w=innerWidth;h=innerHeight;c.width=w;c.height=h;}
+// Particle background
+const c=document.getElementById('particles'),ctx=c.getContext('2d');
+let w,h,p=[];function resize(){w=innerWidth;h=innerHeight;c.width=w;c.height=h;}
 window.addEventListener('resize',resize);resize();
-for(let i=0;i<150;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3});
+for(let i=0;i<250;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3});
 function draw(){
   ctx.clearRect(0,0,w,h);
   for(let a of p){
     ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,2*Math.PI);
-    ctx.fillStyle='rgba(255,215,0,0.8)';ctx.fill();
-    a.x+=a.dx;a.y+=a.dy;if(a.x<0||a.x>w)a.dx*=-1;if(a.y<0||a.y>h)a.dy*=-1;
+    ctx.fillStyle='rgba(255,215,0,0.85)';
+    ctx.fill();
+    a.x+=a.dx;a.y+=a.dy;
+    if(a.x<0||a.x>w)a.dx*=-1;
+    if(a.y<0||a.y>h)a.dy*=-1;
   }
   requestAnimationFrame(draw);
 }
 draw();
-const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('show');});},{threshold:0.2});
+
+// Scroll reveal
+const obs=new IntersectionObserver(e=>{
+  e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('show');});
+},{threshold:0.2});
 document.querySelectorAll('.fade-up').forEach(i=>obs.observe(i));
 </script>
 </body>
