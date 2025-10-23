@@ -1,26 +1,31 @@
 # ⚡ SmartCity Electricity Portal
 
-A modern animated HTML website for paying electricity bills in India.
+A sleek, dark-themed, animated demo portal to pay and track electricity recharges.
 
-## 🌐 Features
-- Beautiful **parallax gold-black background** with gentle drifting particles.
-- Interactive home page with animated service cards.
-- Secure login (demo only, no backend).
-- Dashboard shows **Customer ID**, **Name**, and **Recharge option**.
+## Features
+- Login with demo credentials
+- Enter recharge amount & save transactions
+- View CCC number, meter number, and past recharges
+- Elegant glass UI with particle background
+- Per-user transaction history (saved locally)
 
-## 🧭 Pages
+## Demo Users
+| Email | Password | CCC | Name |
+|--------|-----------|-----|------|
+| user@example.com | pass123 | CCC-1001 | Asha Patel |
+| raj@smartcity.com | raj2025 | CCC-2077 | Raj Kumar |
+
+## Files
 - `index.html` — Home page
 - `meter-login.html` — Login page
-- `dashboard.html` — Dashboard (after login)
+- `dashboard.html` — User dashboard
+- `README.md` — Documentation
 
-## 👤 Demo Accounts
-- `user@example.com` / `pass123`
-- `raj@smartcity.com` / `raj2025`
-
-## 🚀 How to Deploy
-1. Upload the entire folder to your GitHub repository.
-2. Enable GitHub Pages in your repo settings.
-3. Visit your hosted link!
+## Deployment
+Upload all files to a GitHub repository and enable **GitHub Pages** (Settings → Pages).
 
 ---
-© 2025 SmartCity Demo Project
+
+⚠️ **Note:**  
+This is a static demo (no backend).  
+For production: connect to a secure API, database, and payment gateway.
