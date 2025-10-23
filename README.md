@@ -1,21 +1,17 @@
-# ⚡ SmartCity Electricity Portal
+# SmartCity Portal — Parallax Black & Gold Theme
 
-A modern, animated parallax website for paying electricity bills in India.
+Files:
+- `index.html` — Home page (parallax background, animated particles, service cards)
+- `meter-login.html` — Login page (autofill demo credential button)
+- `dashboard.html` — Dashboard (recharge + transaction history)
+- `assets/black-gold.png` — **Place your provided image here** (rename to this path)
 
-## ✨ Features
-- Animated gold particle background
-- Parallax effect across pages
-- Login with demo account (auto-fill available)
-- Dashboard shows customer details and recharge history
-- Responsive and smooth animations
-- Built with pure HTML, CSS (Tailwind), and JS
+## Setup
+1. Create repository and place these files at the root.
+2. Create an `assets` folder and add the background image as `assets/black-gold.png`.
+3. Push to GitHub and enable GitHub Pages (main branch, root).
+4. Visit the published URL.
 
-## 🧠 Demo Credentials
-- **Email:** user@example.com  
-- **Password:** pass123  
-
-## 🚀 Deployment
-1. Upload this folder to a GitHub repository.
-2. Enable **GitHub Pages** in the repository settings.
-3. Visit your published site at:  
-   `https://<your-username>.github.io/<repo-name>/`
+## Notes
+- This is a **demo** — authentication and payments are simulated and rely on `localStorage`.
+- For production: add a secure backend, server-side persistence and integrate a payment gateway (Razorpay/PayU/Stripe).
