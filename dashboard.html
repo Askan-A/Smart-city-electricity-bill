@@ -1,56 +1,183 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SmartCity Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-body{background:#000;color:white;font-family:'Inter',sans-serif;overflow-x:hidden;}
-canvas#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
-.glass{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(8px);}
-.fade{opacity:0;transform:translateY(30px);transition:all .8s ease;}
-.fade.show{opacity:1;transform:translateY(0);}
-</style>
-</head>
-<body>
-<canvas id="particles"></canvas>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartCity Utility Portal — Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 
-<div class="max-w-5xl mx-auto p-6">
-  <header class="flex justify-between items-center mb-8">
-    <h1 class="text-2xl font-bold text-yellow-400">SmartCity Dashboard</h1>
-    <button id="logout" class="text-sm text-yellow-400 underline">Logout</button>
+  <style>
+    :root {
+      --accent: #1e88e5;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: #1f2937;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--accent), #0288d1);
+      color: white;
+    }
+
+    .glass {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      padding: 2rem;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    table th, table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .focus-accent:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(30,136,229,0.2);
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="p-4 shadow">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emblem_of_India.svg/240px-Emblem_of_India.svg.png" alt="Gov Emblem" class="h-10 w-auto" />
+        <div>
+          <h1 class="font-semibold text-lg">SmartCity Utility Portal</h1>
+          <p class="text-xs opacity-90">Electricity Meter Dashboard</p>
+        </div>
+      </div>
+
+      <button onclick="logout()"
+              class="px-4 py-2 bg-white text-blue-700 rounded-lg shadow hover:bg-slate-50 transition">
+        Logout
+      </button>
+    </div>
   </header>
 
-  <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 fade">
-    <div class="glass p-8 rounded-2xl text-center cursor-pointer hover:scale-105 transition" onclick="window.location='meter-login.html'">
-      <h3 class="text-xl font-semibold text-yellow-400 mb-2">Recharge Meter</h3>
-      <p class="text-slate-300 text-sm">Recharge your electricity instantly.</p>
-    </div>
-    <div class="glass p-8 rounded-2xl text-center cursor-pointer hover:scale-105 transition">
-      <h3 class="text-xl font-semibold text-yellow-400 mb-2">Pay Water Bill</h3>
-      <p class="text-slate-300 text-sm">Manage water bills quickly and securely.</p>
-    </div>
-    <div class="glass p-8 rounded-2xl text-center cursor-pointer hover:scale-105 transition">
-      <h3 class="text-xl font-semibold text-yellow-400 mb-2">Mobile Recharge</h3>
-      <p class="text-slate-300 text-sm">Recharge prepaid numbers in seconds.</p>
-    </div>
-  </section>
-</div>
+  <!-- Dashboard -->
+  <main class="flex-grow py-10 px-4">
+    <div class="max-w-4xl mx-auto space-y-10">
 
-<script>
-const s=localStorage.getItem('sc_user');if(!s)location.href='meter-login.html';
-logout.onclick=()=>{localStorage.removeItem('sc_user');location.href='meter-login.html';};
-const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('show');});},{threshold:0.3});
-document.querySelectorAll('.fade').forEach(i=>obs.observe(i));
+      <!-- Welcome -->
+      <div class="glass fade-in">
+        <h2 class="text-xl font-semibold mb-4 text-blue-700">Welcome, <span id="userName"></span></h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          <div><strong>Customer ID:</strong> <span id="customerId"></span></div>
+          <div><strong>Meter ID:</strong> <span id="meterId"></span></div>
+        </div>
+      </div>
 
-const c=document.getElementById('particles'),ctx=c.getContext('2d');let w,h,p=[];
-function resize(){w=innerWidth;h=innerHeight;c.width=w;c.height=h;}
-window.addEventListener('resize',resize);resize();
-for(let i=0;i<150;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3});
-function draw(){ctx.clearRect(0,0,w,h);for(let a of p){ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,2*Math.PI);
-ctx.fillStyle='rgba(255,215,0,0.9)';ctx.fill();a.x+=a.dx;a.y+=a.dy;if(a.x<0||a.x>w)a.dx*=-1;if(a.y<0||a.y>h)a.dy*=-1;}requestAnimationFrame(draw);}
-draw();
-</script>
+      <!-- Recharge Section -->
+      <div class="glass fade-in">
+        <h3 class="text-lg font-semibold mb-4 text-blue-700">Recharge Your Meter</h3>
+        <form id="rechargeForm" class="flex flex-col sm:flex-row gap-3">
+          <input id="amount" type="number" min="1" step="any"
+                 class="flex-1 px-4 py-2 rounded-lg border border-slate-200 focus-accent"
+                 placeholder="Enter recharge amount (₹)" required />
+          <button type="submit"
+                  class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:scale-[1.02] transition-transform shadow">
+            Recharge
+          </button>
+        </form>
+        <div id="rechargeMsg" class="mt-3 text-green-600 text-sm"></div>
+      </div>
+
+      <!-- Transaction History -->
+      <div class="glass fade-in">
+        <h3 class="text-lg font-semibold mb-4 text-blue-700">Previous Transactions</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border-collapse">
+            <thead class="bg-slate-100 text-slate-700">
+              <tr>
+                <th>Date</th>
+                <th>Amount (₹)</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr><td colspan="2" class="text-center py-4 text-slate-400">No transactions yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="bg-slate-100 text-slate-500 text-center text-xs py-3">
+    © 2025 SmartCity Digital Utility Portal — Ministry of Urban Development
+  </footer>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('sc_user') || 'null');
+    if (!user) {
+      location.href = 'meter-login.html';
+    }
+
+    document.getElementById('userName').textContent = user.name;
+    document.getElementById('customerId').textContent = user.customerId;
+    document.getElementById('meterId').textContent = user.meter;
+
+    const rechargeForm = document.getElementById('rechargeForm');
+    const amountInput = document.getElementById('amount');
+    const rechargeMsg = document.getElementById('rechargeMsg');
+    const historyBody = document.getElementById('historyBody');
+
+    let history = JSON.parse(localStorage.getItem('sc_history_' + user.email) || '[]');
+    renderHistory();
+
+    rechargeForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const amt = parseFloat(amountInput.value);
+      if (isNaN(amt) || amt <= 0) return;
+      const record = {
+        date: new Date().toLocaleString(),
+        amount: amt.toFixed(2)
+      };
+      history.unshift(record);
+      localStorage.setItem('sc_history_' + user.email, JSON.stringify(history));
+      amountInput.value = '';
+      rechargeMsg.textContent = `₹${record.amount} recharged successfully!`;
+      renderHistory();
+      setTimeout(() => rechargeMsg.textContent = '', 3000);
+    });
+
+    function renderHistory() {
+      if (history.length === 0) {
+        historyBody.innerHTML = '<tr><td colspan="2" class="text-center py-4 text-slate-400">No transactions yet.</td></tr>';
+        return;
+      }
+      historyBody.innerHTML = history.map(h =>
+        `<tr class="hover:bg-slate-50">
+          <td>${h.date}</td>
+          <td>₹${h.amount}</td>
+        </tr>`
+      ).join('');
+    }
+
+    function logout() {
+      localStorage.removeItem('sc_user');
+      location.href = 'meter-login.html';
+    }
+  </script>
 </body>
 </html>
