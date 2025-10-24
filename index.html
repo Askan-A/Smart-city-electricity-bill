@@ -1,149 +1,152 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartCity — Home</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  body {
-    background: radial-gradient(circle at center, #0a0a0a 40%, #000 100%);
-    color: white;
-    margin: 0;
-    overflow-x: hidden;
-    font-family: 'Inter', sans-serif;
-  }
-  canvas#particles {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -2;
-  }
-  .hero-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 110%;
-    height: 110%;
-    background: url('assets/bg.png') center/cover no-repeat;
-    filter: brightness(0.35);
-    z-index: -3;
-    transform: scale(1);
-    animation: zoom 40s ease-in-out infinite alternate;
-  }
-  @keyframes zoom {
-    0% { transform: scale(1); filter: brightness(0.35); }
-    100% { transform: scale(1.1); filter: brightness(0.45); }
-  }
-  .glass {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    backdrop-filter: blur(8px);
-    border-radius: 16px;
-  }
-  .fade-up {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 0.9s ease;
-  }
-  .fade-up.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 30px rgba(255,215,0,0.15);
-  }
-  section.fullscreen {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-  }
-  .scroll-down {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #facc15;
-    font-size: 0.9rem;
-    animation: bounce 1.5s infinite;
-  }
-  @keyframes bounce {
-    0%,100% { transform: translate(-50%, 0); }
-    50% { transform: translate(-50%, -10px); }
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartCity Utility Portal — Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --accent: #1e88e5; /* official blue accent */
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #f9fafb;
+      color: #1f2937;
+      font-family: 'Inter', sans-serif;
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--accent), #0288d1);
+      color: white;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .option-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+    }
+
+    .option-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .option-card:active {
+      transform: scale(0.98);
+    }
+
+    .section-divider {
+      height: 4px;
+      background: linear-gradient(to right, var(--accent), #5ac8fa);
+      width: 100px;
+      border-radius: 2px;
+      margin: 1rem auto;
+    }
+
+    .footer {
+      background-color: #e3f2fd;
+      color: #374151;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+  </style>
 </head>
+
 <body>
-<div class="hero-bg"></div>
-<canvas id="particles"></canvas>
+  <!-- Header -->
+  <header class="p-4 shadow">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emblem_of_India.svg/240px-Emblem_of_India.svg.png" alt="Gov Emblem" class="h-10 w-auto" />
+        <div>
+          <h1 class="font-semibold text-lg">SmartCity Utility Portal</h1>
+          <p class="text-xs opacity-90">Ministry of Urban Development, Government of India</p>
+        </div>
+      </div>
 
-<!-- Fullscreen Hero -->
-<section class="fullscreen relative">
-  <h1 class="text-5xl font-bold text-yellow-400 tracking-wide mb-3 animate-fadeIn">⚡ SmartCity Electricity Portal ⚡</h1>
-  <p class="text-slate-300 text-lg">Powering your city with elegance and innovation.</p>
-  <div class="scroll-down">▼ Scroll Down ▼</div>
-</section>
-
-<!-- Options Section -->
-<main class="flex flex-col items-center space-y-24 pt-20 pb-20">
-  <section class="text-center w-full max-w-3xl fade-up">
-    <h2 class="text-2xl font-semibold mb-4">Our Services</h2>
-    <p class="text-slate-400 mb-10">Discover SmartCity’s interactive utilities below.</p>
-  </section>
-
-  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl px-6 fade-up">
-    <div class="card glass p-8 text-center cursor-pointer transition" onclick="window.location='meter-login.html'">
-      <h3 class="text-xl font-semibold text-yellow-400 mb-2">Recharge Your Meter</h3>
-      <p class="text-slate-300 text-sm">Recharge electricity instantly and track your bills.</p>
+      <a href="meter-login.html" class="px-4 py-2 bg-white text-blue-700 rounded-lg shadow hover:bg-slate-50 transition">Login</a>
     </div>
-    <div class="card glass p-8 text-center cursor-pointer transition">
-      <h3 class="text-xl font-semibold text-yellow-400 mb-2">Pay Water Bill</h3>
-      <p class="text-slate-300 text-sm">Manage your SmartCity water bill easily.</p>
-    </div>
-    <div class="card glass p-8 text-center cursor-pointer transition">
-      <h3 class="text-xl font-semibold text-yellow-400 mb-2">Mobile Recharge</h3>
-      <p class="text-slate-300 text-sm">Top up prepaid numbers instantly.</p>
+  </header>
+
+  <!-- Hero -->
+  <section class="h-screen flex flex-col items-center justify-center bg-white text-center p-8">
+    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-3">Welcome to SmartCity Utility Services</h2>
+    <p class="text-slate-600 max-w-xl mx-auto">
+      Pay your electricity, water, and mobile bills online with transparency and ease.
+      Access your account securely, manage recharges, and view your history — all in one place.
+    </p>
+    <div class="mt-8">
+      <a href="#services" class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+        Explore Services ↓
+      </a>
     </div>
   </section>
-</main>
 
-<footer class="text-center text-slate-400 py-12 text-sm">
-  <button onclick="window.location='meter-login.html'" class="bg-yellow-500 text-black px-6 py-3 rounded-full hover:bg-yellow-400 transition">Go to Login</button>
-  <p class="mt-4">© 2025 SmartCity Energy</p>
-</footer>
+  <!-- Service Options (scroll to reveal) -->
+  <section id="services" class="bg-gray-50 py-20">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h3 class="text-2xl font-semibold mb-2 text-slate-800">Available Services</h3>
+      <div class="section-divider"></div>
+      <p class="text-slate-500 mb-12">Choose a service to continue. Each service provides a secure and transparent payment process.</p>
 
-<script>
-// Particle background
-const c=document.getElementById('particles'),ctx=c.getContext('2d');
-let w,h,p=[];function resize(){w=innerWidth;h=innerHeight;c.width=w;c.height=h;}
-window.addEventListener('resize',resize);resize();
-for(let i=0;i<250;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3});
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  for(let a of p){
-    ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,2*Math.PI);
-    ctx.fillStyle='rgba(255,215,0,0.85)';
-    ctx.fill();
-    a.x+=a.dx;a.y+=a.dy;
-    if(a.x<0||a.x>w)a.dx*=-1;
-    if(a.y<0||a.y>h)a.dy*=-1;
-  }
-  requestAnimationFrame(draw);
-}
-draw();
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="option-card fade-in" onclick="window.location.href='meter-login.html'">
+          <img src="https://cdn-icons-png.flaticon.com/512/3104/3104794.png" class="w-12 h-12 mx-auto mb-4" alt="Meter" />
+          <h4 class="font-semibold text-lg mb-2 text-slate-700">Recharge Your Meter</h4>
+          <p class="text-sm text-slate-500">Instantly pay your electricity bill and manage your CCC account.</p>
+        </div>
 
-// Scroll reveal
-const obs=new IntersectionObserver(e=>{
-  e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('show');});
-},{threshold:0.2});
-document.querySelectorAll('.fade-up').forEach(i=>obs.observe(i));
-</script>
+        <div class="option-card fade-in" onclick="alert('Water Bill payment coming soon.')">
+          <img src="https://cdn-icons-png.flaticon.com/512/1047/1047449.png" class="w-12 h-12 mx-auto mb-4" alt="Water" />
+          <h4 class="font-semibold text-lg mb-2 text-slate-700">Pay Water Bill</h4>
+          <p class="text-sm text-slate-500">Seamless online water billing for residential and commercial users.</p>
+        </div>
+
+        <div class="option-card fade-in" onclick="alert('Mobile recharge coming soon.')">
+          <img src="https://cdn-icons-png.flaticon.com/512/1047/1047577.png" class="w-12 h-12 mx-auto mb-4" alt="Mobile" />
+          <h4 class="font-semibold text-lg mb-2 text-slate-700">Mobile Recharge</h4>
+          <p class="text-sm text-slate-500">Recharge your prepaid mobile connection in a few easy steps.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    © 2025 SmartCity Digital Utility Portal — Developed under SmartCity Mission, Govt. of India.
+  </footer>
+
+  <script>
+    // Fade-in on scroll effect
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
