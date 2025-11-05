@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartCity Utility Portal — Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --accent: #1e88e5; }
+
+    body {
+      background-color: #f5f7fa;
+      color: #1f2937;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .glass {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    .focus-accent:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(30,136,229,0.2);
+      border-color: var(--accent);
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .footer {
+      background-color: #e3f2fd;
+      color: #374151;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="p-4 bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emblem_of_India.svg/240px-Emblem_of_India.svg.png"
+             alt="Gov Emblem" class="h-10 w-auto" />
+        <div>
+          <h1 class="font-semibold text-lg">SmartCity Utility Portal</h1>
+          <p class="text-xs opacity-90">Ministry of Urban Development, Government of India</p>
+        </div>
+      </div>
+      <a href="index.html"
+         class="px-4 py-2 bg-white text-blue-700 rounded-lg shadow hover:bg-slate-50 transition">Home</a>
+    </div>
+  </header>
+
+  <!-- Login Form -->
+  <main class="min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-md w-full glass p-8 fade-in">
+      <h2 class="text-2xl font-semibold text-center text-slate-800 mb-2">Sign In</h2>
+      <p class="text-sm text-center text-slate-500 mb-6">Access your SmartCity account securely.</p>
+
+      <form id="loginForm" class="space-y-5">
+        <div>
+          <label class="text-xs font-medium text-slate-600">Email Address</label>
+          <input id="email" type="email" required
+                 class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-300 focus-accent focus:border-transparent"
+                 placeholder="you@example.com" />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-slate-600">Password</label>
+          <input id="password" type="password" required
+                 class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-300 focus-accent focus:border-transparent"
+                 placeholder="••••••••" />
+        </div>
+
+        <div class="flex items-center justify-between text-sm">
+          <label class="flex items-center gap-2 text-slate-600">
+            <input id="remember" type="checkbox" class="h-4 w-4" /> Remember me
+          </label>
+          <a href="#" class="text-blue-700 hover:underline text-sm" onclick="alert('Demo: No password reset')">Forgot password?</a>
+        </div>
+
+        <div id="loginError" class="text-sm text-red-600 min-h-[1.2em]"></div>
+
+        <button type="submit"
+                class="w-full mt-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold shadow hover:scale-[1.01] transition-transform">
+          Sign In
+        </button>
+
+        <div class="pt-3 text-center text-xs text-slate-500">
+          Or <a href="#" class="text-blue-600 underline" onclick="fillDemo()">use demo credentials</a>
+        </div>
+      </form>
+
+      <p class="mt-6 text-xs text-slate-400 text-center">
+        This is a demo static site. For real-world deployment, connect to a secure API and payment gateway.
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    © 2025 SmartCity Digital Utility Portal — Developed under SmartCity Mission, Govt. of India.
+  </footer>
+
+  <script>
+    const USERS = [
+      { email: 'user@example.com', password: 'pass123', customerId: 'CCC-1001', name: 'Asha Patel', meter: 'MTR-908172' },
+      { email: 'raj@smartcity.com', password: 'raj2025', customerId: 'CCC-2077', name: 'Raj Kumar', meter: 'MTR-118291' }
+    ];
+
+    const form = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const emailEl = document.getElementById('email');
+    const passwordEl = document.getElementById('password');
+    const rememberEl = document.getElementById('remember');
+
+    function fillDemo() {
+      emailEl.value = 'user@example.com';
+      passwordEl.value = 'pass123';
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      loginError.textContent = '';
+
+      const email = emailEl.value.trim();
+      const password = passwordEl.value.trim();
+      const found = USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+
+      if (!found) {
+        loginError.textContent = 'Invalid email or password.';
+        return;
+      }
+
+      localStorage.setItem('sc_user', JSON.stringify(found));
+      if (rememberEl.checked) localStorage.setItem('sc_remember', '1');
+      else localStorage.removeItem('sc_remember');
+
+      // redirect to dashboard
+      window.location.href = 'dashboard.html';
+    });
+
+    // Auto-login redirect if already signed in
+    (function() {
+      const sess = localStorage.getItem('sc_user');
+      if (sess) window.location.href = 'dashboard.html';
+    })();
+  </script>
+</body>
+</html>
