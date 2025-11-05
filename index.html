@@ -3,65 +3,150 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Meter Login — SmartCity</title>
+  <title>SmartCity Utility Portal — Home</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    body { background: #f8fafc; font-family: 'Inter', sans-serif; }
-  </style>
-</head>
-<body class="flex items-center justify-center min-h-screen p-6">
-  <div class="max-w-md w-full bg-white shadow-md rounded-2xl p-8">
-    <h2 class="text-xl font-semibold mb-1 text-slate-800">Enter Meter Details</h2>
-    <p class="text-sm text-slate-500 mb-6">Verify your meter to proceed with recharge</p>
-
-    <form id="meterForm" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-slate-600">Meter Number</label>
-        <input id="meterNo" type="text" required class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-teal-400" placeholder="e.g. MTR-908172">
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-slate-600">Password</label>
-        <input id="meterPass" type="password" required class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-teal-400" placeholder="••••••••">
-      </div>
-
-      <div id="meterError" class="text-sm text-red-600"></div>
-
-      <button type="submit" class="w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg font-semibold">Continue</button>
-
-      <button type="button" onclick="fillDemoMeter()" class="w-full py-2 mt-2 border rounded-lg text-sm hover:bg-slate-50">Auto-fill Demo</button>
-    </form>
-  </div>
-
-  <script>
-    const meterForm = document.getElementById('meterForm');
-    const error = document.getElementById('meterError');
-
-    meterForm.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const meter = meterNo.value.trim();
-      const pass = meterPass.value.trim();
-      const user = JSON.parse(localStorage.getItem('sc_user') || '{}');
-      if(!user || user.meter !== meter || user.password !== pass){
-        error.textContent = "Incorrect meter number or password.";
-        return;
-      }
-      localStorage.setItem('meter_verified', '1');
-      window.location.href = "dashboard.html";
-    });
-
-    function fillDemoMeter(){
-      const user = JSON.parse(localStorage.getItem('sc_user') || '{}');
-      if(user){
-        document.getElementById('meterNo').value = user.meter;
-        document.getElementById('meterPass').value = user.password;
-      } else {
-        document.getElementById('meterNo').value = 'MTR-908172';
-        document.getElementById('meterPass').value = 'pass123';
-      }
+    :root {
+      --accent: #1e88e5; /* official blue accent */
     }
 
-    if(!localStorage.getItem('sc_user')) window.location.href = "index.html";
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #f9fafb;
+      color: #1f2937;
+      font-family: 'Inter', sans-serif;
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--accent), #0288d1);
+      color: white;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .option-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+    }
+
+    .option-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .option-card:active {
+      transform: scale(0.98);
+    }
+
+    .section-divider {
+      height: 4px;
+      background: linear-gradient(to right, var(--accent), #5ac8fa);
+      width: 100px;
+      border-radius: 2px;
+      margin: 1rem auto;
+    }
+
+    .footer {
+      background-color: #e3f2fd;
+      color: #374151;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="p-4 shadow">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emblem_of_India.svg/240px-Emblem_of_India.svg.png" alt="Gov Emblem" class="h-10 w-auto" />
+        <div>
+          <h1 class="font-semibold text-lg">SmartCity Utility Portal</h1>
+          <p class="text-xs opacity-90">Ministry of Urban Development, Government of India</p>
+        </div>
+      </div>
+
+      <a href="meter-login.html" class="px-4 py-2 bg-white text-blue-700 rounded-lg shadow hover:bg-slate-50 transition">Login</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="h-screen flex flex-col items-center justify-center bg-white text-center p-8">
+    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-3">Welcome to SmartCity Utility Services</h2>
+    <p class="text-slate-600 max-w-xl mx-auto">
+      Pay your electricity, water, and mobile bills online with transparency and ease.
+      Access your account securely, manage recharges, and view your history — all in one place.
+    </p>
+    <div class="mt-8">
+      <a href="#services" class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+        Explore Services ↓
+      </a>
+    </div>
+  </section>
+
+  <!-- Service Options (scroll to reveal) -->
+  <section id="services" class="bg-gray-50 py-20">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h3 class="text-2xl font-semibold mb-2 text-slate-800">Available Services</h3>
+      <div class="section-divider"></div>
+      <p class="text-slate-500 mb-12">Choose a service to continue. Each service provides a secure and transparent payment process.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="option-card fade-in" onclick="window.location.href='meter-login.html'">
+          <img src="https://cdn-icons-png.flaticon.com/512/3104/3104794.png" class="w-12 h-12 mx-auto mb-4" alt="Meter" />
+          <h4 class="font-semibold text-lg mb-2 text-slate-700">Recharge Your Meter</h4>
+          <p class="text-sm text-slate-500">Instantly pay your electricity bill and manage your CCC account.</p>
+        </div>
+
+        <div class="option-card fade-in" onclick="alert('Water Bill payment coming soon.')">
+          <img src="https://cdn-icons-png.flaticon.com/512/1047/1047449.png" class="w-12 h-12 mx-auto mb-4" alt="Water" />
+          <h4 class="font-semibold text-lg mb-2 text-slate-700">Pay Water Bill</h4>
+          <p class="text-sm text-slate-500">Seamless online water billing for residential and commercial users.</p>
+        </div>
+
+        <div class="option-card fade-in" onclick="alert('Mobile recharge coming soon.')">
+          <img src="https://cdn-icons-png.flaticon.com/512/1047/1047577.png" class="w-12 h-12 mx-auto mb-4" alt="Mobile" />
+          <h4 class="font-semibold text-lg mb-2 text-slate-700">Mobile Recharge</h4>
+          <p class="text-sm text-slate-500">Recharge your prepaid mobile connection in a few easy steps.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    © 2025 SmartCity Digital Utility Portal — Developed under SmartCity Mission, Govt. of India.
+  </footer>
+
+  <script>
+    // Fade-in on scroll effect
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
