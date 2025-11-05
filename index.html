@@ -3,32 +3,62 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SmartCity Utility Portal — Home</title>
+  <title>SmartCity Utility Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
   <style>
-    :root { --accent: #1e88e5; }
-    html { scroll-behavior: smooth; }
-    body { background-color: #f9fafb; color: #1f2937; font-family: 'Inter', sans-serif; }
-    header { background: linear-gradient(90deg, var(--accent), #0288d1); color: white; }
-    .fade-in { opacity: 0; transform: translateY(20px); transition: all 0.8s ease; }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #1f2937;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(to bottom right, #e3f2fd, #ffffff);
+    }
+
+    .scroll-section {
+      min-height: 100vh;
+      background: #ffffff;
+      padding: 5rem 1rem;
+      opacity: 0;
+      transform: translateY(60px);
+      transition: all 0.8s ease;
+    }
+
+    .scroll-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .option-card {
-      background: white; border-radius: 1rem; padding: 1.5rem;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
-      transition: transform 0.25s ease, box-shadow 0.25s ease; cursor: pointer;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .option-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-    .option-card:active { transform: scale(0.98); }
-    .section-divider {
-      height: 4px; background: linear-gradient(to right, var(--accent), #5ac8fa);
-      width: 100px; border-radius: 2px; margin: 1rem auto;
+
+    .option-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
     }
-    .footer { background-color: #e3f2fd; color: #374151; padding: 1rem; text-align: center; font-size: 0.875rem; }
+
+    .option-icon {
+      font-size: 3rem;
+      color: #2563eb;
+    }
   </style>
 </head>
 <body>
   <!-- Header -->
-  <header class="p-4 shadow">
+  <header class="p-4 bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emblem_of_India.svg/240px-Emblem_of_India.svg.png"
@@ -38,72 +68,63 @@
           <p class="text-xs opacity-90">Ministry of Urban Development, Government of India</p>
         </div>
       </div>
-      <a href="login.html"
-         class="px-4 py-2 bg-white text-blue-700 rounded-lg shadow hover:bg-slate-50 transition">Login</a>
+      <a href="login.html" class="px-4 py-2 bg-white text-blue-700 rounded-lg shadow hover:bg-slate-50 transition">
+        Sign In
+      </a>
     </div>
   </header>
 
   <!-- Hero -->
-  <section class="h-screen flex flex-col items-center justify-center bg-white text-center p-8">
-    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-3">Welcome to SmartCity Utility Services</h2>
-    <p class="text-slate-600 max-w-xl mx-auto">
-      Pay your electricity, water, and mobile bills online with transparency and ease.
-      Access your account securely, manage recharges, and view your history — all in one place.
-    </p>
-    <div class="mt-8">
-      <a href="#services"
-         class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
-        Explore Services ↓
-      </a>
+  <section class="hero">
+    <div>
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 text-slate-800">Welcome to SmartCity Utility Portal</h1>
+      <p class="text-slate-600 mb-6 max-w-2xl mx-auto">Pay your bills, recharge utilities, and manage your smart meter — all in one secure government platform.</p>
+      <a href="login.html" class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:scale-105 transition">Get Started</a>
     </div>
   </section>
 
-  <!-- Service Options (scroll to reveal) -->
-  <section id="services" class="bg-gray-50 py-20">
-    <div class="max-w-5xl mx-auto px-4 text-center">
-      <h3 class="text-2xl font-semibold mb-2 text-slate-800">Available Services</h3>
-      <div class="section-divider"></div>
-      <p class="text-slate-500 mb-12">
-        Choose a service to continue. Each service provides a secure and transparent payment process.
-      </p>
-
+  <!-- Scroll Section -->
+  <section id="options" class="scroll-section">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl font-semibold text-center mb-10 text-slate-800">Our Services</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="option-card fade-in" onclick="window.location.href='login.html'">
-          <img src="https://cdn-icons-png.flaticon.com/512/3104/3104794.png"
-               class="w-12 h-12 mx-auto mb-4" alt="Meter" />
-          <h4 class="font-semibold text-lg mb-2 text-slate-700">Recharge Your Meter</h4>
-          <p class="text-sm text-slate-500">Instantly pay your electricity bill and manage your CCC account.</p>
-        </div>
+        <!-- Meter Recharge -->
+        <a href="meter-login.html" class="option-card p-8 text-center">
+          <i class="lucide-bolt option-icon mb-3"></i>
+          <h3 class="text-xl font-semibold mb-2 text-slate-800">Recharge Your Meter</h3>
+          <p class="text-slate-500 text-sm">Easily recharge your electricity meter online and view past transactions.</p>
+        </a>
 
-        <div class="option-card fade-in" onclick="alert('Water Bill payment coming soon.')">
-          <img src="https://cdn-icons-png.flaticon.com/512/1047/1047449.png"
-               class="w-12 h-12 mx-auto mb-4" alt="Water" />
-          <h4 class="font-semibold text-lg mb-2 text-slate-700">Pay Water Bill</h4>
-          <p class="text-sm text-slate-500">Seamless online water billing for residential and commercial users.</p>
-        </div>
+        <!-- Water Bill -->
+        <a href="#" class="option-card p-8 text-center">
+          <i class="lucide-droplets option-icon mb-3"></i>
+          <h3 class="text-xl font-semibold mb-2 text-slate-800">Pay Water Bill</h3>
+          <p class="text-slate-500 text-sm">Conveniently pay your household or commercial water bills online.</p>
+        </a>
 
-        <div class="option-card fade-in" onclick="alert('Mobile recharge coming soon.')">
-          <img src="https://cdn-icons-png.flaticon.com/512/1047/1047577.png"
-               class="w-12 h-12 mx-auto mb-4" alt="Mobile" />
-          <h4 class="font-semibold text-lg mb-2 text-slate-700">Mobile Recharge</h4>
-          <p class="text-sm text-slate-500">Recharge your prepaid mobile connection in a few easy steps.</p>
-        </div>
+        <!-- Mobile Recharge -->
+        <a href="#" class="option-card p-8 text-center">
+          <i class="lucide-smartphone option-icon mb-3"></i>
+          <h3 class="text-xl font-semibold mb-2 text-slate-800">Mobile Recharge</h3>
+          <p class="text-slate-500 text-sm">Recharge your prepaid mobile or pay postpaid bills instantly.</p>
+        </a>
       </div>
     </div>
   </section>
 
-  <footer class="footer">
-    © 2025 SmartCity Digital Utility Portal — Developed under SmartCity Mission, Govt. of India.
+  <footer class="text-center py-4 text-xs text-slate-400">
+    © 2025 SmartCity Digital Utility Portal — Government of India
   </footer>
 
   <script>
-    // Fade-in on scroll effect
-    const observer = new IntersectionObserver((entries) => {
+    // Fade-in on scroll
+    const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('visible');
       });
-    }, { threshold: 0.15 });
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.scroll-section').forEach(section => observer.observe(section));
   </script>
 </body>
 </html>
