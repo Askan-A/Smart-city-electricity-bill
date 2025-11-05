@@ -1,25 +1,20 @@
-# ⚡ SmartCity Electricity Portal — Final Version
+# SmartCity Electricity Portal
 
-### Features
-- Animated dark UI with gold particle drift
-- Parallax scroll and fade-in animations
-- Login with demo users
-- Recharge directly in login page
-- Transaction history per user (saved in `localStorage`)
-- Dashboard with animated service cards
+A professional, government-style static demo for electricity bill payment.
 
-### Demo Credentials
-| Email | Password |
-|--------|-----------|
-| user@example.com | pass123 |
-| raj@smartcity.com | raj2025 |
+## Pages
+- **index.html** – User login
+- **meter-login.html** – Meter verification (new)
+- **dashboard.html** – Recharge & transaction history
 
-### Files
-- `index.html` — Home page with scroll animations  
-- `meter-login.html` — Login + Recharge + Transaction History  
-- `dashboard.html` — Overview page  
-- `README.md` — Project documentation
+## Demo Credentials
+- `user@example.com` / `pass123`
+- `raj@smartcity.com` / `raj2025`
 
-### Deployment
-Upload all files to a GitHub repo → **Settings → Pages → Deploy from `/main` → root folder.**
+## How to Use
+1. Login → Verify Meter → Recharge.
+2. All data stored locally via `localStorage`.
+3. To deploy: upload all files to a GitHub repo → enable GitHub Pages.
 
+---
+⚠️ **Note:** This is a static simulation. For production, use a backend, secure authentication, and payment gateway.
