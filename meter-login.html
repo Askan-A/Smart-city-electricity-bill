@@ -3,166 +3,59 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SmartCity Utility Portal — Login</title>
+  <title>Meter Login — SmartCity</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
-    :root {
-      --accent: #1e88e5;
-    }
-
-    body {
-      background-color: #f9fafb;
-      color: #1f2937;
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-    }
-
-    header {
-      background: linear-gradient(90deg, var(--accent), #0288d1);
-      color: white;
-    }
-
-    .glass {
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-      padding: 2rem;
-    }
-
-    .focus-accent:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(30,136,229,0.15);
-      border-color: var(--accent);
-    }
-
-    .fade-in {
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeIn 0.6s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
+    body { background: #f8fafc; font-family: 'Inter', sans-serif; }
   </style>
 </head>
+<body class="flex items-center justify-center min-h-screen p-6">
+  <div class="max-w-md w-full bg-white shadow-md rounded-2xl p-8">
+    <h2 class="text-xl font-semibold mb-1 text-slate-800">Enter Meter Details</h2>
+    <p class="text-sm text-slate-500 mb-6">Verify your meter before recharging</p>
 
-<body>
-  <!-- Header -->
-  <header class="p-4 shadow">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emblem_of_India.svg/240px-Emblem_of_India.svg.png" alt="Gov Emblem" class="h-10 w-auto" />
-        <div>
-          <h1 class="font-semibold text-lg">SmartCity Utility Portal</h1>
-          <p class="text-xs opacity-90">Ministry of Urban Development, Government of India</p>
-        </div>
+    <form id="meterForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-600">Meter Number</label>
+        <input id="meterNo" type="text" required class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-teal-400" placeholder="e.g. MTR-908172">
       </div>
 
-      <a href="index.html" class="px-4 py-2 bg-white text-blue-700 rounded-lg shadow hover:bg-slate-50 transition">Home</a>
-    </div>
-  </header>
-
-  <!-- Login Section -->
-  <main class="flex items-center justify-center py-16 px-4 fade-in">
-    <div class="max-w-md w-full glass">
-      <h2 class="text-xl font-semibold text-center mb-2">Sign In to Continue</h2>
-      <p class="text-sm text-center text-slate-500 mb-6">Access your electricity meter dashboard securely.</p>
-
-      <form id="loginForm" class="space-y-4" autocomplete="on">
-        <div>
-          <label class="text-xs font-medium text-slate-600">Email</label>
-          <input id="email" type="email" required
-                 class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-200 focus-accent focus:border-transparent"
-                 placeholder="you@example.com" />
-        </div>
-
-        <div>
-          <label class="text-xs font-medium text-slate-600">Password</label>
-          <input id="password" type="password" required
-                 class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-200 focus-accent focus:border-transparent"
-                 placeholder="••••••••" />
-        </div>
-
-        <div class="flex items-center justify-between text-sm">
-          <label class="flex items-center gap-2 text-slate-600">
-            <input id="remember" type="checkbox" class="h-4 w-4" /> Remember me
-          </label>
-          <a href="#" onclick="alert('Password recovery is disabled in demo.')" class="text-blue-600 hover:underline">Forgot?</a>
-        </div>
-
-        <div>
-          <div id="loginError" class="text-sm text-red-600 min-h-[1.2em]"></div>
-          <button type="submit"
-                  class="w-full mt-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-sky-500 text-white font-semibold shadow hover:scale-[1.01] transition-transform">
-            Sign In
-          </button>
-        </div>
-      </form>
-
-      <div class="mt-6 text-center">
-        <button onclick="fillDemo()" class="text-sm text-blue-600 hover:underline">
-          Autofill demo credentials
-        </button>
+      <div>
+        <label class="block text-sm font-medium text-slate-600">Password</label>
+        <input id="meterPass" type="password" required class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-teal-400" placeholder="••••••••">
       </div>
 
-      <div class="mt-6 text-xs text-center text-slate-400">
-        Demo accounts:<br>
-        <strong>user@example.com / pass123</strong><br>
-        <strong>raj@smartcity.com / raj2025</strong>
-      </div>
-    </div>
-  </main>
+      <div id="meterError" class="text-sm text-red-600"></div>
 
-  <footer class="bg-slate-100 text-slate-500 text-center text-xs py-3">
-    © 2025 SmartCity Digital Utility Portal — All rights reserved.
-  </footer>
+      <button type="submit" class="w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg font-semibold">Continue</button>
+      <button type="button" onclick="fillDemoMeter()" class="w-full py-2 mt-2 border rounded-lg text-sm hover:bg-slate-50">Auto-fill Demo</button>
+    </form>
+  </div>
 
   <script>
-    // Demo user database
-    const USERS = [
-      { email: 'user@example.com', password: 'pass123', customerId: 'CCC-1001', name: 'Asha Patel', meter: 'MTR-908172' },
-      { email: 'raj@smartcity.com', password: 'raj2025', customerId: 'CCC-2077', name: 'Raj Kumar', meter: 'MTR-118291' }
-    ];
+    if(!localStorage.getItem('sc_user')) window.location.href = "index.html";
+    const user = JSON.parse(localStorage.getItem('sc_user'));
 
-    const form = document.getElementById('loginForm');
-    const emailEl = document.getElementById('email');
-    const passwordEl = document.getElementById('password');
-    const rememberEl = document.getElementById('remember');
-    const loginError = document.getElementById('loginError');
+    const meterForm = document.getElementById('meterForm');
+    const error = document.getElementById('meterError');
 
-    function fillDemo() {
-      emailEl.value = 'user@example.com';
-      passwordEl.value = 'pass123';
-    }
-
-    form.addEventListener('submit', (e) => {
+    meterForm.addEventListener('submit', (e)=>{
       e.preventDefault();
-      loginError.textContent = '';
+      const meter = meterNo.value.trim();
+      const pass = meterPass.value.trim();
 
-      const email = emailEl.value.trim();
-      const password = passwordEl.value.trim();
-
-      const found = USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-      if (!found) {
-        loginError.textContent = 'Invalid email or password.';
-        return;
+      if(user.meter === meter && user.password === pass){
+        localStorage.setItem('meter_verified', 'true');
+        window.location.href = "dashboard.html";
+      } else {
+        error.textContent = "Incorrect meter number or password.";
       }
-
-      // Store user session
-      localStorage.setItem('sc_user', JSON.stringify(found));
-      if (rememberEl.checked) localStorage.setItem('sc_remember', '1');
-      else localStorage.removeItem('sc_remember');
-
-      location.href = 'dashboard.html';
     });
 
-    // If already logged in, redirect
-    (function(){
-      const sess = localStorage.getItem('sc_user');
-      if (sess) location.href = 'dashboard.html';
-    })();
+    function fillDemoMeter(){
+      meterNo.value = user.meter;
+      meterPass.value = user.password;
+    }
   </script>
 </body>
 </html>
