@@ -3,59 +3,176 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Meter Login — SmartCity</title>
+  <title>SmartCity Meter Recharge</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background: #f8fafc; font-family: 'Inter', sans-serif; }
+    body {
+      background-color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+    }
+
+    .glass {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      animation: fadeIn 0.6s ease forwards;
+      transform: translateY(20px);
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .btn {
+      background: linear-gradient(to right, #2563eb, #3b82f6);
+      color: white;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 14px rgba(59,130,246,0.3);
+    }
   </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-6">
-  <div class="max-w-md w-full bg-white shadow-md rounded-2xl p-8">
-    <h2 class="text-xl font-semibold mb-1 text-slate-800">Enter Meter Details</h2>
-    <p class="text-sm text-slate-500 mb-6">Verify your meter before recharging</p>
+<body>
+  <!-- Header -->
+  <header class="p-4 bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emblem_of_India.svg/240px-Emblem_of_India.svg.png"
+             alt="Gov Emblem" class="h-10 w-auto" />
+        <div>
+          <h1 class="font-semibold text-lg">SmartCity Utility Portal</h1>
+          <p class="text-xs opacity-90">Meter Recharge Section</p>
+        </div>
+      </div>
+      <a href="dashboard.html"
+         class="px-4 py-2 bg-white text-blue-700 rounded-lg shadow hover:bg-slate-50 transition">Back to Dashboard</a>
+    </div>
+  </header>
 
-    <form id="meterForm" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-slate-600">Meter Number</label>
-        <input id="meterNo" type="text" required class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-teal-400" placeholder="e.g. MTR-908172">
+  <!-- Meter Login Form -->
+  <main class="min-h-screen flex flex-col items-center justify-center px-6 py-8">
+    <div class="max-w-md w-full glass p-8">
+      <h2 class="text-2xl font-semibold text-center mb-2 text-slate-800">Meter Authentication</h2>
+      <p class="text-sm text-center text-slate-500 mb-6">Please verify your meter credentials before recharge.</p>
+
+      <form id="meterLoginForm" class="space-y-5">
+        <div>
+          <label class="text-xs font-medium text-slate-600">Meter Number</label>
+          <input id="meterNumber" type="text" required
+                 class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                 placeholder="e.g., MTR-908172" />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-slate-600">Password</label>
+          <input id="meterPassword" type="password" required
+                 class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                 placeholder="••••••••" />
+        </div>
+
+        <div id="meterError" class="text-sm text-red-600 min-h-[1.2em]"></div>
+
+        <button type="submit" class="btn w-full py-3">Verify Meter</button>
+
+        <div class="pt-3 text-center text-xs text-slate-500">
+          <a href="#" class="text-blue-600 underline" onclick="fillDemoMeter()">Use demo meter credentials</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Recharge Section -->
+    <div id="rechargeSection" class="hidden mt-12 w-full max-w-2xl glass p-8">
+      <h3 class="text-xl font-semibold mb-4 text-slate-800">Recharge Meter</h3>
+
+      <div class="mb-4">
+        <p><strong>Customer ID:</strong> <span id="custId"></span></p>
+        <p><strong>Name:</strong> <span id="custName"></span></p>
+        <p><strong>Meter No:</strong> <span id="custMeter"></span></p>
       </div>
 
-      <div>
-        <label class="block text-sm font-medium text-slate-600">Password</label>
-        <input id="meterPass" type="password" required class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-teal-400" placeholder="••••••••">
+      <form id="rechargeForm" class="space-y-4">
+        <div>
+          <label class="text-xs font-medium text-slate-600">Recharge Amount (₹)</label>
+          <input id="rechargeAmount" type="number" min="1" required
+                 class="mt-1 block w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                 placeholder="Enter amount" />
+        </div>
+
+        <button type="submit" class="btn w-full py-3">Recharge</button>
+      </form>
+
+      <div class="mt-8">
+        <h4 class="text-lg font-semibold mb-3">Previous Transactions</h4>
+        <ul id="transactionList" class="text-sm space-y-2 text-slate-600"></ul>
       </div>
+    </div>
+  </main>
 
-      <div id="meterError" class="text-sm text-red-600"></div>
-
-      <button type="submit" class="w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg font-semibold">Continue</button>
-      <button type="button" onclick="fillDemoMeter()" class="w-full py-2 mt-2 border rounded-lg text-sm hover:bg-slate-50">Auto-fill Demo</button>
-    </form>
-  </div>
+  <footer class="text-center py-4 text-xs text-slate-400">
+    © 2025 SmartCity Digital Utility Portal
+  </footer>
 
   <script>
-    if(!localStorage.getItem('sc_user')) window.location.href = "index.html";
-    const user = JSON.parse(localStorage.getItem('sc_user'));
+    const demoMeter = { meterNumber: 'MTR-908172', meterPassword: 'pass123' };
 
-    const meterForm = document.getElementById('meterForm');
-    const error = document.getElementById('meterError');
+    const meterForm = document.getElementById('meterLoginForm');
+    const meterError = document.getElementById('meterError');
+    const rechargeSection = document.getElementById('rechargeSection');
 
-    meterForm.addEventListener('submit', (e)=>{
+    function fillDemoMeter() {
+      document.getElementById('meterNumber').value = demoMeter.meterNumber;
+      document.getElementById('meterPassword').value = demoMeter.meterPassword;
+    }
+
+    meterForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const meter = meterNo.value.trim();
-      const pass = meterPass.value.trim();
+      const meter = document.getElementById('meterNumber').value.trim();
+      const pass = document.getElementById('meterPassword').value.trim();
 
-      if(user.meter === meter && user.password === pass){
-        localStorage.setItem('meter_verified', 'true');
-        window.location.href = "dashboard.html";
+      if (meter === demoMeter.meterNumber && pass === demoMeter.meterPassword) {
+        meterForm.classList.add('hidden');
+        rechargeSection.classList.remove('hidden');
+        const user = JSON.parse(localStorage.getItem('sc_user')) || {};
+        document.getElementById('custId').textContent = user.customerId || 'CCC-1001';
+        document.getElementById('custName').textContent = user.name || 'Asha Patel';
+        document.getElementById('custMeter').textContent = user.meter || meter;
+        loadTransactions();
       } else {
-        error.textContent = "Incorrect meter number or password.";
+        meterError.textContent = 'Invalid meter credentials.';
       }
     });
 
-    function fillDemoMeter(){
-      meterNo.value = user.meter;
-      meterPass.value = user.password;
+    // Recharge + Transaction history
+    const rechargeForm = document.getElementById('rechargeForm');
+    const transactionList = document.getElementById('transactionList');
+
+    function loadTransactions() {
+      const txns = JSON.parse(localStorage.getItem('sc_txns') || '[]');
+      transactionList.innerHTML = txns.map(t => `<li>₹${t.amount} — ${t.date}</li>`).join('');
     }
+
+    rechargeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const amt = document.getElementById('rechargeAmount').value;
+      if (!amt || amt <= 0) return;
+      const txns = JSON.parse(localStorage.getItem('sc_txns') || '[]');
+      const newTxn = { amount: amt, date: new Date().toLocaleString() };
+      txns.unshift(newTxn);
+      localStorage.setItem('sc_txns', JSON.stringify(txns));
+      document.getElementById('rechargeAmount').value = '';
+      loadTransactions();
+      alert('Recharge successful!');
+    });
   </script>
 </body>
 </html>
